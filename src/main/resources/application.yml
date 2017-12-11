@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bill
+    username: sa
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 2
+      min-idle: 2
+      max-active: 10
+      stat-view-servlet:
+        login-username: test
+        login-password: 123456
