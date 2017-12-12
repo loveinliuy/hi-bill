@@ -5,16 +5,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * @author zhangshibo
+ */
 @Controller
 @SpringBootApplication
 public class Application {
 
     @RequestMapping("")
-    public String index(){
+    public String index() {
 
         return "index";
     }
-
 
 
     public static void main(String[] args) {
