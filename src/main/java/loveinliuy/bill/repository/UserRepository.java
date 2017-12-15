@@ -15,8 +15,9 @@ public interface UserRepository extends MongoRepository<User, String> {
      * 根据用户名和编码后的面获取用户
      *
      * @param username 用户名
-     * @param password 编码后的密码
      * @return 对应用户
      */
-    User findUserByUsernameAndPassword(String username, String password);
+    User findUserByUsername(String username);
+
+
 }

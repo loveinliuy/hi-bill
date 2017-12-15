@@ -1,7 +1,8 @@
 spring:
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      username:
-      password:
+      uri: mongodb://localhost:27017/bill
+  http:
+    encoding:
+      charset: utf-8
+      force: true

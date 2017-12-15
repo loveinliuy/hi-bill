@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>我家的小账本</title>
+
+    <link rel="stylesheet" href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div class="container">
+    <h1>新增记录</h1>
+    <form class="form-horizontal" th:action="@{/bill/add}" method="post">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">收支</label>
+            <div class="col-sm-10">
+                <label class="radio-inline">
+                    <input type="radio" name="type" id="type-out" value="支出" checked="checked"/>支出
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="type" id="type-in" value="收入"/>收入
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="code">类型</label>
+            <div class="col-sm-10">
+                <select id="code" class="form-control" th:each="type : ${costType}">
+                    <option th:text="${type.codeName}">类型1</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="description">描述</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="description" id="description" placeholder="哪儿花的"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="cost">金额</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="cost" id="cost" placeholder="花多钱"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row col-sm-offset-2 col-sm-10">
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-default">提交</button>
+                </div>
+                <div class="col-sm-4">
+                    <a role="button" th:href="@{/index}" class="btn btn-default">取消</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="../../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.min.js}"></script>
+<script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.min.js}"></script>
+<script type="text/javascript">
+    $(function () {
+        $('input[type=radio][name=type]').click(function () {
+            var $this = $(this);
+            if ($this.val() === '收入') {
+                $('input[name=description]').attr('placeholder', '哪儿来的');
+                $('input[name=cost]').attr('placeholder', '来多钱');
+            } else {
+                $('input[name=description]').attr('placeholder', '哪儿花的');
+                $('input[name=cost]').attr('placeholder', '花多钱');
+            }
+        });
+    });
+</script>
+</body>
+</html>
