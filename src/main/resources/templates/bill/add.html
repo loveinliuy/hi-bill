@@ -30,18 +30,11 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label" for="code">类型</label>
-            <div class="col-sm-10">
-                <select id="code" class="form-control" th:each="type : ${costType}">
-                    <option th:text="${type.codeName}">类型1</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
             <label class="col-sm-2 control-label" for="date">日期</label>
             <div class="col-sm-10">
                 <div class="input-group date">
-                    <input type="text" class="form-control" id="date" name="date" value="" placeholder="啥时候"
+                    <input type="text" class="form-control" id="date" name="date" value="2015-01-01" placeholder="啥时候"
+                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
                            data-bv-notempty="true"
                            data-bv-notempty-message="还没选啥时候花的呢"/>
                     <div class="input-group-addon">
@@ -64,11 +57,11 @@
                 <input type="text" class="form-control" name="cost" id="cost" placeholder="花多钱"
                        data-bv-notempty="true"
                        data-bv-notempty-message="花了多钱啊"
-                       data-bv.numeric="true"
-                       data-bv.numeric-separator="."
-                       data-bv-numeric-message="填数字就行"
+                       data-bv-regexp="true"
+                       data-bv-regexp-regexp="^(([1-9]\d{0,9})|0)(\.\d{1,2})?$"
+                       data-bv-regexp-message="填正确的金额"
                        data-bv-greaterthan="true"
-                       data-bv.greaterthan-inclusive="false"
+                       data-bv-greaterthan-inclusive="false"
                        data-bv-greaterthan-value="0.00"
                        data-bv-greaterthan-message="你填这钱没大于0啊"/>
             </div>
@@ -92,9 +85,29 @@
 <script src="../../static/js/bootstrapValidator.js" th:src="@{/js/bootstrapValidator.js}"></script>
 <script src="../../static/js/locales/bootstrapValidator.zh_CN.js"
         th:src="@{/js/locales/bootstrapValidator.zh_CN.js}"></script>
-<script type="text/javascript">
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
     $(function () {
-        $('form').bootstrapValidator();
+        $('form').bootstrapValidator({
+            fields: {
+                description: {
+                    validators: {
+                        remote: {
+                            url: /*[[@{/bill/description/validate}]]*/ '/bill/description/validate',
+                            data: function (validator, $field, value) {
+                                return {
+                                    date: validator.getFieldElements('date').val(),
+                                    description: value
+                                };
+                            },
+                            type: "GET",
+                            delay: 1000,
+                            message: '今天已经写过一个了'
+                        }
+                    }
+                }
+            }
+        });
         $('input[type=radio][name=type]').click(function () {
             var $this = $(this);
             if ($this.val() === '收入') {
@@ -111,8 +124,11 @@
             $('form').data('bootstrapValidator')
                 .updateStatus('date', 'NOT_VALIDATED', null)
                 .validateField('date');
+        }).on('changeDate', function () {
+            $('.date').datepicker('hide');
         });
     });
+    /*]]>*/
 </script>
 </body>
 </html>

@@ -26,7 +26,7 @@
                     <a th:href="@{/}">首页</a>
                 </li>
                 <li role="presentation">
-                    <a th:href="@{/bill}">账单</a>
+                    <a th:href="@{/bill}">账单查询</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -35,7 +35,6 @@
                        aria-expanded="false">用户<span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#">个人设置</a></li>
-                        <li><a th:href="@{/bill/add}">添加账单信息</a></li>
                         <li role="separator" class="divider"></li>
                         <li>
                             <div class="col-xs-offset-1 col-xs-10">
@@ -69,7 +68,7 @@
                 <th scope="row" th:text="${billStat.index + 1}">1</th>
                 <td th:text="${#dates.format(bill.date, 'yyyy-MM-dd')}">2015-01-01</td>
                 <td th:text="${bill.description}">账单内容1</td>
-                <td th:text="${#numbers.formatDecimal(bill.cost, 2, 'COMMA', 2, 'POINT')}">10.1</td>
+                <td th:text="${#numbers.formatDecimal(bill.cost, 1, 'COMMA', 2, 'POINT')}">10.1</td>
             </tr>
             </tbody>
         </table>

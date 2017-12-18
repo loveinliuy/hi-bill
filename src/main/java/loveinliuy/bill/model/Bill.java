@@ -42,11 +42,6 @@ public class Bill implements Serializable {
     private String type;
 
     /**
-     * 类目ID
-     */
-    private String code;
-
-    /**
      * 描述
      */
     private String description;
