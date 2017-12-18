@@ -3,6 +3,7 @@ package loveinliuy.bill.service;
 import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.User;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +20,15 @@ public interface BillService {
      * @return 这个用户的近期账单
      */
     List<Bill> getUserRecentBills(User user);
+
+    /**
+     * 检查指定的描述是否在当天有重复
+     *
+     * @param date 指定日期
+     * @param description 指定描述
+     * @return 重复返回true，反之返回false
+     */
+    boolean isWriteThatDay(Date date, String description);
 
     /**
      * 保存一个账单

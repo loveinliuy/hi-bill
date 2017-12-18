@@ -5,12 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.Message;
 import loveinliuy.bill.service.BillService;
+import loveinliuy.bill.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * description:
@@ -28,6 +35,14 @@ public class BillAct {
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String save(Model model) {
         return "bill/add";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/description/validate")
+    public Map<String, Boolean> descriptionValid(String date, String description){
+        Date dt = DateUtil.fromString(date).toDate();
+        Boolean writeToday = service.isWriteThatDay(dt, description);
+        return Collections.singletonMap("valid", !writeToday);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
