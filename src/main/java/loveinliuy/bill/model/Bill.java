@@ -37,6 +37,11 @@ public class Bill implements Serializable {
     private String userId;
 
     /**
+     * 类型
+     */
+    private String type;
+
+    /**
      * 类目ID
      */
     private String code;
