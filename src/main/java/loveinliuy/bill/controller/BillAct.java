@@ -3,18 +3,14 @@ package loveinliuy.bill.controller;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import loveinliuy.bill.model.Bill;
-import loveinliuy.bill.model.Code;
 import loveinliuy.bill.model.Message;
 import loveinliuy.bill.service.BillService;
-import loveinliuy.bill.service.CodeService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.List;
 
 /**
  * description:
@@ -29,14 +25,8 @@ public class BillAct {
     @Autowired
     private BillService service;
 
-    @Autowired
-    private CodeService codeService;
-
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String save(Model model) {
-        List<Code> types = codeService.getAllCostType();
-
-        model.addAttribute("costType", types);
         return "bill/add";
     }
 

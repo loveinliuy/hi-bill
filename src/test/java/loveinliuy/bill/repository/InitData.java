@@ -1,6 +1,5 @@
 package loveinliuy.bill.repository;
 
-import loveinliuy.bill.model.Code;
 import loveinliuy.bill.model.User;
 import loveinliuy.bill.util.IdentityUtil;
 import org.junit.Test;
@@ -17,8 +16,6 @@ public class InitData extends BaseSpringBootTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private CodeRepository codeRepository;
 
     @Test
     public void userData() {
@@ -33,19 +30,5 @@ public class InitData extends BaseSpringBootTest {
 
         userRepository.save(user);
 
-    }
-
-    @Test
-    public void codeData(){
-        codeRepository.deleteAll();
-
-        Code code = Code.builder()
-                .id("-1")
-                .codeName("不好分")
-                .typeName(Code.COST_TYPE)
-                .priority(Integer.MAX_VALUE)
-                .build();
-
-        codeRepository.save(code);
     }
 }
