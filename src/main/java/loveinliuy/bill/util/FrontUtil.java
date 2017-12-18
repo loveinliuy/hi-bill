@@ -23,7 +23,7 @@ public class FrontUtil {
      * @param message 消息内容
      */
     public static void success(Model model, String message) {
-        message(model, Message.Type.OK, message);
+        message(model, Message.Type.SUCCESS, message);
     }
 
 
@@ -34,7 +34,7 @@ public class FrontUtil {
      * @param message 消息内容
      */
     public static void fail(Model model, String message) {
-        message(model, Message.Type.ERROR, message);
+        message(model, Message.Type.DANGER, message);
     }
 
     /**

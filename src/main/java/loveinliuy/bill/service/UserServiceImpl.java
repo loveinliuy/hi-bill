@@ -1,5 +1,6 @@
 package loveinliuy.bill.service;
 
+import loveinliuy.bill.model.User;
 import loveinliuy.bill.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,10 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.findUserByUsername(username);
+        User user =  repository.findUserByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("Username [" + username + "] not found");
+        }
+        return user;
     }
 }

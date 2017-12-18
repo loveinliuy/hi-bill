@@ -1,6 +1,9 @@
 package loveinliuy.bill.service;
 
 import loveinliuy.bill.model.Bill;
+import loveinliuy.bill.model.User;
+
+import java.util.List;
 
 /**
  * description:
@@ -8,6 +11,14 @@ import loveinliuy.bill.model.Bill;
  * @author zhangshibo  [2017/12/14].
  */
 public interface BillService {
+
+    /**
+     * 获取一个用户的近期账单
+     *
+     * @param user 用户
+     * @return 这个用户的近期账单
+     */
+    List<Bill> getUserRecentBills(User user);
 
     /**
      * 保存一个账单
