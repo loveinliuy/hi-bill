@@ -1,8 +1,6 @@
 package loveinliuy.bill.model;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,7 +14,16 @@ import java.util.Date;
  * @author zhangshibo  [2017/12/12].
  */
 @Data
-public class Bill implements Serializable{
+public class Bill implements Serializable {
+
+    /**
+     * 用户ID
+     */
+    public static final String PROP_NAME_USER_ID = "userId";
+    /**
+     * 添加时间
+     */
+    public static final String PROP_NAME_ADD_DATE = "addDate";
 
     /**
      * 账单ID
@@ -47,4 +54,6 @@ public class Bill implements Serializable{
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date date;
+
+    private Date addDate;
 }

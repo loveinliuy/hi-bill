@@ -3,6 +3,9 @@ package loveinliuy.bill.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * description:
  *
@@ -37,9 +40,13 @@ public class Message {
     }
 
     public String toParamString() {
-        return "redirect:/message?" +
-                "type=" + type.toString().toLowerCase() +
-                "&" +
-                "message=" + message;
+        try {
+            return "redirect:/message?" +
+                    "type=" + type.toString().toLowerCase() +
+                    "&" +
+                    "message=" + URLEncoder.encode(message, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
 <body>
-<div class="container" th:if="${param.message != null && param.type!=null}" th:switch="${param.type[0]}">
+<div class="container" th:if="${param.message != null and param.type!=null}" th:switch="${param.type[0]}">
     <div style="height: 100px;"></div>
     <div th:case="'success'" class="alert alert-success" role="alert">
         <strong>恭喜：</strong>
