@@ -21,10 +21,25 @@ public class Message {
         /**
          * 成功
          */
-        OK,
+        SUCCESS,
         /**
-         * 失败
+         * 消息
          */
-        ERROR
+        INFO,
+        /**
+         * 警告
+         */
+        WARN,
+        /**
+         * 失败，危险操作
+         */
+        DANGER
+    }
+
+    public String toParamString() {
+        return "redirect:/message?" +
+                "type=" + type.toString().toLowerCase() +
+                "&" +
+                "message=" + message;
     }
 }
