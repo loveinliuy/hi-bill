@@ -32,11 +32,28 @@
         <p th:text="${param.message[0]}"></p>
     </div>
     <p>
-        <a class="btn btn-primary pull-right" href="#" th:href="@{/}" role="button">回到首页</a>
+        <a id="back-index" class="btn btn-primary pull-right" href="#" th:href="@{/}" role="button">
+            回到首页<span class="badge">3</span>
+        </a>
     </p>
 </div>
 
 <script src="../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.min.js}"></script>
 <script src="../static/js/bootstrap.js" th:src="@{/js/bootstrap.min.js}"></script>
+<script type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        var time = 3;
+        var i = 1;
+        setInterval(function () {
+            $('#back-index').find('.badge').text(time - i);
+            i++;
+        }, 1000);
+        setTimeout(function () {
+            window.location.href = $('#back-index').attr('href');
+        }, time * 1000);
+    });
+    /*]]>*/
+</script>
 </body>
 </html>
