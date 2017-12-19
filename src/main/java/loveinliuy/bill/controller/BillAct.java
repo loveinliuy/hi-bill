@@ -32,6 +32,11 @@ public class BillAct {
     @Autowired
     private BillService service;
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String list(){
+        return "bill/list";
+    }
+
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String save(Model model) {
         return "bill/add";

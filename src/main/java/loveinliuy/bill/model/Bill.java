@@ -1,6 +1,7 @@
 package loveinliuy.bill.model;
 
 import lombok.Data;
+import loveinliuy.bill.util.DateUtil;
 import org.springframework.data.annotation.Id;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -52,7 +53,7 @@ public class Bill implements Serializable {
     private Double cost;
 
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(pattern = DateUtil.DATE_FORMAT)
     private Date date;
 
     private Date addDate;
