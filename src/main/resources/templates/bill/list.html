@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>我家的小账本</title>
+
+    <link rel="stylesheet" href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="../../static/css/bootstrap-datepicker.css"
+          th:href="@{/css/bootstrap-datepicker.min.css}"/>
+    <link rel="stylesheet" href="../../static/css/bootstrapValidator.css" th:href="@{/css/bootstrapValidator.min.css}"/>
+    <link rel="stylesheet" href="../../static/css/bill.css" th:href="@{/css/bill.css}"/>
+</head>
+<body>
+<div class="container">
+    <div style="height:60px;"></div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h4>当月收支情况</h4>
+        </div>
+        <div class="panel-body bill-statistic">
+            <div class="pull-left col-xs-5">
+                <h3>支出</h3>
+                <h4><span class="glyphicon glyphicon-yen"></span>1300.00</h4>
+            </div>
+            <div class="pull-left col-xs-5">
+                <h3>收入</h3>
+                <h4><span class="glyphicon glyphicon-yen"></span>100.00</h4>
+            </div>
+        </div>
+    </div>
+
+    <form method="get" action="">
+
+    </form>
+</div>
+
+<script src="../../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.min.js}"></script>
+<script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.min.js}"></script>
+<script src="../../static/js/bootstrap-datepicker.js" th:src="@{/js/bootstrap-datepicker.min.js}"></script>
+<script src="../../static/js/locales/bootstrap-datepicker.zh-CN.min.js"
+        th:src="@{/js/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
+<script src="../../static/js/bootstrapValidator.js" th:src="@{/js/bootstrapValidator.js}"></script>
+<script src="../../static/js/locales/bootstrapValidator.zh_CN.js"
+        th:src="@{/js/locales/bootstrapValidator.zh_CN.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        $('form').bootstrapValidator({
+            fields: {
+                description: {
+                    validators: {
+                        remote: {
+                            url: /*[[@{/bill/description/validate}]]*/ '/bill/description/validate',
+                            data: function (validator, $field, value) {
+                                return {
+                                    date: validator.getFieldElements('date').val(),
+                                    description: value
+                                };
+                            },
+                            type: "GET",
+                            delay: 1000,
+                            message: '今天已经写过一个了'
+                        }
+                    }
+                }
+            }
+        });
+        $('input[type=radio][name=type]').click(function () {
+            var $this = $(this);
+            if ($this.val() === '收入') {
+                $('input[name=description]').attr('placeholder', '哪儿来的');
+                $('input[name=cost]').attr('placeholder', '来多钱');
+            } else {
+                $('input[name=description]').attr('placeholder', '哪儿花的');
+                $('input[name=cost]').attr('placeholder', '花多钱');
+            }
+        });
+        $('.date').datepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd'
+        }).on('hide', function () {
+            $('form').data('bootstrapValidator')
+                .updateStatus('date', 'NOT_VALIDATED', null)
+                .validateField('date');
+        }).on('changeDate', function () {
+            $('.date').datepicker('hide');
+        });
+    });
+    /*]]>*/
+</script>
+</body>
+</html>
