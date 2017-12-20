@@ -10,6 +10,9 @@ import java.util.Date;
 
 public class DateUtil {
 
+    public static final String MONTH_FORMAT = "yyyy-MM";
+
+    public static final String SIMPLE_MONTH_FORMAT = "yyyyMM";
     /**
      * The Constant DATE_FORMAT.
      */
@@ -44,6 +47,8 @@ public class DateUtil {
      * The Constant SUPPORT_PARSERS.
      */
     private static final DateTimeParser[] SUPPORT_PARSERS = new DateTimeParser[]{
+            DateTimeFormat.forPattern(MONTH_FORMAT).getParser(),
+            DateTimeFormat.forPattern(SIMPLE_MONTH_FORMAT).getParser(),
             DateTimeFormat.forPattern(DATE_FORMAT).getParser(),
             DateTimeFormat.forPattern(SIMPLE_DATE_FORMAT).getParser(),
             DateTimeFormat.forPattern(DATE_TIME_FORMAT).getParser(),

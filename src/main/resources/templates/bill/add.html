@@ -4,9 +4,10 @@
 </head>
 <body>
 <nav th:replace="fragments/nav :: nav"></nav>
-<div class="container" style="margin-top: 60px">
+<div class="container">
+    <div style="height: 60px;"></div>
     <h1>新增记录</h1>
-    <form class="form-horizontal" th:action="@{/bill/add}" method="post"
+    <form id="new-bill-form" class="form-horizontal" th:action="@{/bill/add}" method="post"
           data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
           data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
           data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
@@ -25,13 +26,13 @@
             <label class="col-sm-2 control-label" for="date">日期</label>
             <div class="col-sm-10">
                 <div class="input-group date">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </div>
                     <input type="text" class="form-control" id="date" name="date" value="2015-01-01" placeholder="啥时候"
                            th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
                            data-bv-notempty="true"
                            data-bv-notempty-message="还没选啥时候花的呢"/>
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -73,7 +74,7 @@
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
     $(function () {
-        $('form').bootstrapValidator({
+        $('#new-bill-form').bootstrapValidator({
             fields: {
                 description: {
                     validators: {
@@ -107,9 +108,8 @@
             language: 'zh-CN',
             format: 'yyyy-mm-dd'
         }).on('hide', function () {
-            $('form').data('bootstrapValidator')
-                .updateStatus('date', 'NOT_VALIDATED', null)
-                .validateField('date');
+            $('#new-bill-form').data('bootstrapValidator')
+                .revalidateField('date');
         }).on('changeDate', function () {
             $('.date').datepicker('hide');
         });

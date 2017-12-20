@@ -7,6 +7,9 @@ import loveinliuy.bill.util.IdentityUtil;
 import loveinliuy.bill.util.SessionUtil;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,8 @@ import java.util.Objects;
 @Service
 public class BillServiceImpl implements BillService {
 
+    private static final int PAGE_SIZE = 10;
+
     @Autowired
     private BillRepository repository;
 
@@ -29,6 +34,13 @@ public class BillServiceImpl implements BillService {
     @Override
     public List<Bill> getUserRecentBills(User user) {
         return repository.findTop5ByUserId(user.getId(), new Sort(Sort.Direction.DESC, Bill.PROP_NAME_ADD_DATE));
+    }
+
+    @Override
+    public Page<Bill> getBillsBetweenDateRange(User user, Date[] range, int page) {
+        Sort sort = new Sort(Sort.Direction.DESC, Bill.PROP_NAME_ADD_DATE);
+        PageRequest pageRequest = new PageRequest(page, PAGE_SIZE, sort);
+        return repository.findAllByUserIdAndDateBetween(user.getId(), range[0], range[1], pageRequest);
     }
 
     @Override

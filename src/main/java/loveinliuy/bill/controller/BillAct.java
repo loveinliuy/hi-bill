@@ -6,18 +6,16 @@ import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.Message;
 import loveinliuy.bill.service.BillService;
 import loveinliuy.bill.util.DateUtil;
+import loveinliuy.bill.util.SessionUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DurationFieldType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * description:
@@ -32,8 +30,24 @@ public class BillAct {
     @Autowired
     private BillService service;
 
+
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String list(){
+    public String list(String date, @RequestParam(name = "page", defaultValue = "0") Integer page, Model model) {
+        DateTime dt;
+        if (StringUtils.isEmpty(date)) {
+            dt = DateTime.now();
+        } else {
+            dt = DateUtil.fromString(date);
+        }
+
+        Date startTime = dt.withDayOfMonth(1).withTimeAtStartOfDay().toDate();
+        Date endTime = dt.withFieldAdded(DurationFieldType.months(), 1).withDayOfMonth(1).withTimeAtStartOfDay().toDate();
+
+        SessionUtil.getCurrentUser()
+                .ifPresent(s ->
+                        model.addAttribute("bills",
+                                service.getBillsBetweenDateRange(s, new Date[]{startTime, endTime}, page)));
+        model.addAttribute("date", dt.toDate());
         return "bill/list";
     }
 
@@ -44,7 +58,7 @@ public class BillAct {
 
     @ResponseBody
     @RequestMapping(value = "/description/validate")
-    public Map<String, Boolean> descriptionValid(String date, String description){
+    public Map<String, Boolean> descriptionValid(String date, String description) {
         Date dt = DateUtil.fromString(date).toDate();
         Boolean writeToday = service.isWriteThatDay(dt, description);
         return Collections.singletonMap("valid", !writeToday);
