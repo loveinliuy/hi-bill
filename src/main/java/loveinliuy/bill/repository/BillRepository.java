@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.List;
  *
  * @author zhangshibo  [2017/12/14].
  */
-public interface BillRepository extends MongoRepository<Bill, String>, MongoAggregationRepository {
+public interface BillRepository extends MongoRepository<Bill, String>, BillRepositoryCustom {
 
     /**
      * 根据用户ID获得最新内容

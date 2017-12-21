@@ -7,7 +7,7 @@ import java.util.Date;
  *
  * @author zhangshibo  [2017/12/21].
  */
-public interface MongoAggregationRepository {
+public interface BillRepositoryCustom {
 
 
     /**

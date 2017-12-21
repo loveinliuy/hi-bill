@@ -18,7 +18,8 @@ import java.util.HashMap;
  *
  * @author zhangshibo  [2017/12/21].
  */
-public class MongoAggregationRepositoryImpl implements MongoAggregationRepository {
+@Repository
+public class BillRepositoryImpl implements BillRepositoryCustom {
 
     @Autowired
     private MongoTemplate mongoTemplate;
