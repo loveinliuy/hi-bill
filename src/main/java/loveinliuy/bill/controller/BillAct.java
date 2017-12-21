@@ -48,6 +48,9 @@ public class BillAct {
                 .ifPresent(s ->
                         model.addAttribute("bills",
                                 service.getBillsBetweenDateRange(s, new Date[]{startTime, endTime}, page)));
+
+        model.addAttribute("totalIn", 1300);
+        model.addAttribute("totalOut", 100.1);
         model.addAttribute("date", dt.toDate());
         model.addAttribute("page", page);
         return "bill/list";

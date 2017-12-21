@@ -1,7 +1,7 @@
 package loveinliuy.bill.repository;
 
-import loveinliuy.bill.model.User;
-import loveinliuy.bill.util.IdentityUtil;
+import org.joda.time.DateTime;
+import org.joda.time.DurationFieldType;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,21 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class InitData extends BaseSpringBootTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private BillRepository repository;
 
 
     @Test
     public void userData() {
-        userRepository.deleteAll();
-
-        User user = User.builder()
-                .id(IdentityUtil.uuid())
-                .username("test")
-                .password(User.DEFAULT_ENCRYPTED_PASSWORD)
-                .realName("测试1")
-                .build();
-
-        userRepository.save(user);
-
+        Object o  = repository.userTotalBillBetweenDate("-1", DateTime.now().withDayOfMonth(1).withTimeAtStartOfDay().toDate(),
+                DateTime.now().withFieldAdded(DurationFieldType.months(), 1).withDayOfMonth(1).withTimeAtStartOfDay().toDate());
+        System.out.println(o);
     }
 }

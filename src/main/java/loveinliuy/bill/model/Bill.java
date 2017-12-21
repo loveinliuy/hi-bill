@@ -21,6 +21,11 @@ public class Bill implements Serializable {
      * 用户ID
      */
     public static final String PROP_NAME_USER_ID = "userId";
+
+    /**
+     * 属性名称date
+     */
+    public static final String PROP_NAME_DATE = "date";
     /**
      * 添加时间
      */

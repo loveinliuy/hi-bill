@@ -14,11 +14,17 @@
         <div class="panel-body bill-statistic">
             <div class="pull-left col-xs-5">
                 <h3>支出</h3>
-                <h4><span class="glyphicon glyphicon-yen"></span>1300.00</h4>
+                <h4 th:inline="text">
+                    <span class="glyphicon glyphicon-yen"></span>
+                    [[${#numbers.formatDecimal(totalOut, 1, 'COMMA', 2, 'POINT')}]]
+                </h4>
             </div>
             <div class="pull-left col-xs-5">
                 <h3>收入</h3>
-                <h4><span class="glyphicon glyphicon-yen"></span>100.00</h4>
+                <h4 th:inline="text">
+                    <span class="glyphicon glyphicon-yen"></span>
+                    [[${#numbers.formatDecimal(totalIn, 1, 'COMMA', 2, 'POINT')}]]
+                </h4>
             </div>
         </div>
     </div>
@@ -68,21 +74,8 @@
             </tr>
             </tbody>
         </table>
-        <nav aria-label="bill-data-pagination" class="text-center">
-            <ul class="pagination">
-                <li th:class="${page == 0 ? 'disabled' : ''}">
-                    <a th:href="@{/bill(date=${#dates.format(date, 'yyyyMM')}, page=${page-1})}">&laquo;</a>
-                </li>
-                <li th:each="p,s : ${#numbers.sequence(1, bills.getTotalPages())}"
-                    th:class="${page+1 == p ? 'active' : ''}"
-                    th:classappend="${page>3 or page<bills.getTotalPages()-3 ? 'visiable-xs'}">
-                    <a th:href="@{/bill(date=${#dates.format(date, 'yyyyMM')}, page=${s.index})}"
-                       th:text="${p}"></a>
-                </li>
-                <li th:class="${page == bills.getTotalPages()-1 ? 'disabled' : ''}">
-                    <a th:href="@{/bill(date=${#dates.format(date, 'yyyyMM')}, page=${page+1})}">&raquo;</a>
-                </li>
-            </ul>
+        <nav class="text-center">
+            <ul id="bill-data-pagination" class="pagination"></ul>
         </nav>
     </div>
 </div>
@@ -103,6 +96,34 @@
         }).on('changeDate', function () {
             $('.date').datepicker('hide');
         });
+
+        (function () {
+            var totalPages = /*[[${bills.getTotalPages()}]]*/ 100;
+            var currentPage = /*[[${page+1}]]*/1;
+            if (totalPages <= 1 || currentPage <= 0) {
+                return;
+            }
+            $('#bill-data-pagination').jqPaginator({
+                totalPages: totalPages,
+                currentPage: currentPage,
+                visiblePages: 6,
+                first: '',
+                prev: '<li class="prev"><a href="javascript:;">&laquo;</a></li>',
+                next: '<li class="next"><a href="javascript:;">&raquo;</a></li>',
+                last: '',
+                page: '<li class="page"><a href="javascript:;">{{page}}</a></li>',
+                onPageChange: function (num, type) {
+                    if (type === 'change') {
+                        var url = /*[[@{/bill}]]*/ '/bill';
+                        url += '?date=';
+                        url += /*[[${#dates.format(date, 'yyyyMM')}]]*/ '201511';
+                        url += '&page=' + (num - 1);
+                        location.href = url;
+                    }
+                }
+            })
+        })();
+
     });
     /*]]>*/
 </script>
