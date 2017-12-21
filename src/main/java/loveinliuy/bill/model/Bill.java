@@ -26,6 +26,16 @@ public class Bill implements Serializable {
      * 属性名称date
      */
     public static final String PROP_NAME_DATE = "date";
+
+    /**
+     * 字段名称：花费
+     */
+    public static final String PROP_NAME_COST = "cost";
+
+    /**
+     * 类型
+     */
+    public static final String PROP_NAME_TYPE = "type";
     /**
      * 添加时间
      */
@@ -45,7 +55,7 @@ public class Bill implements Serializable {
     /**
      * 类型
      */
-    private String type;
+    private Type type;
 
     /**
      * 描述
@@ -62,4 +72,20 @@ public class Bill implements Serializable {
     private Date date;
 
     private Date addDate;
+
+    public enum Type {
+        Income("收入"),
+        Expense("支出");
+
+        String description;
+
+        Type(String desc) {
+            description = desc;
+        }
+
+        @Override
+        public String toString() {
+            return description;
+        }
+    }
 }

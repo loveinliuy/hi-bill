@@ -3,6 +3,8 @@ package loveinliuy.bill.controller;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import loveinliuy.bill.model.Bill;
+import loveinliuy.bill.model.BillStatistic;
+import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.Message;
 import loveinliuy.bill.service.BillService;
 import loveinliuy.bill.util.DateUtil;
@@ -41,16 +43,17 @@ public class BillAct {
             dt = DateUtil.fromString(date);
         }
 
-        Date startTime = dt.withDayOfMonth(1).withTimeAtStartOfDay().toDate();
-        Date endTime = dt.withFieldAdded(DurationFieldType.months(), 1).withDayOfMonth(1).withTimeAtStartOfDay().toDate();
+        DateRange range = DateRange.fullMonth(dt);
 
         SessionUtil.getCurrentUser()
-                .ifPresent(s ->
-                        model.addAttribute("bills",
-                                service.getBillsBetweenDateRange(s, new Date[]{startTime, endTime}, page)));
+                .ifPresent(s -> {
+                    model.addAttribute("bills",
+                            service.getBillsBetweenDateRange(s, range, page));
+                    model.addAttribute("billStatistic",
+                            service.getUserBillStatisticBetweenDateRange(s, range));
+                });
 
-        model.addAttribute("totalIn", 1300);
-        model.addAttribute("totalOut", 100.1);
+
         model.addAttribute("date", dt.toDate());
         model.addAttribute("page", page);
         return "bill/list";

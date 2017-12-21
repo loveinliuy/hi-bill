@@ -16,14 +16,14 @@
                 <h3>支出</h3>
                 <h4 th:inline="text">
                     <span class="glyphicon glyphicon-yen"></span>
-                    [[${#numbers.formatDecimal(totalOut, 1, 'COMMA', 2, 'POINT')}]]
+                    [[${#numbers.formatDecimal(billStatistic.expense, 1, 'COMMA', 2, 'POINT')}]]
                 </h4>
             </div>
             <div class="pull-left col-xs-5">
                 <h3>收入</h3>
                 <h4 th:inline="text">
                     <span class="glyphicon glyphicon-yen"></span>
-                    [[${#numbers.formatDecimal(totalIn, 1, 'COMMA', 2, 'POINT')}]]
+                    [[${#numbers.formatDecimal(billStatistic.income, 1, 'COMMA', 2, 'POINT')}]]
                 </h4>
             </div>
         </div>
@@ -68,7 +68,7 @@
             <tbody th:each="bill,billStat : ${bills}">
             <tr>
                 <th scope="row" th:text="${billStat.index + 1}">1</th>
-                <td th:text="${#dates.format(bill.date, 'yyyy-MM-dd')}">2015-01-01</td>
+                <td th:text="${#dates.format(bill.date, 'MM-dd')}">2015-01-01</td>
                 <td th:text="${bill.description}">账单内容1</td>
                 <td th:text="${#numbers.formatDecimal(bill.cost, 1, 'COMMA', 2, 'POINT')}">10.1</td>
             </tr>

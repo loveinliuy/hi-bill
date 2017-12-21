@@ -1,6 +1,9 @@
 package loveinliuy.bill.repository;
 
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+
 import java.util.Date;
+import java.util.Map;
 
 /**
  * description:
@@ -8,6 +11,8 @@ import java.util.Date;
  * @author zhangshibo  [2017/12/21].
  */
 public interface BillRepositoryCustom {
+
+    String SUM_GROUP_ALIAS = "total";
 
 
     /**
@@ -18,5 +23,5 @@ public interface BillRepositoryCustom {
      * @param end    结束
      * @return 聚合结果
      */
-    Object userTotalBillBetweenDate(String userId, Date start, Date end);
+    AggregationResults<Map> userTotalBillBetweenDate(String userId, Date start, Date end);
 }
