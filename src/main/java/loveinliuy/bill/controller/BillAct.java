@@ -8,6 +8,7 @@ import loveinliuy.bill.service.BillService;
 import loveinliuy.bill.util.DateUtil;
 import loveinliuy.bill.util.SessionUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class BillAct {
                         model.addAttribute("bills",
                                 service.getBillsBetweenDateRange(s, new Date[]{startTime, endTime}, page)));
         model.addAttribute("date", dt.toDate());
+        model.addAttribute("page", page);
         return "bill/list";
     }
 
