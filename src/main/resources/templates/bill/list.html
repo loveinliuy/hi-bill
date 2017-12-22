@@ -14,17 +14,17 @@
         <div class="panel-body bill-statistic">
             <div class="pull-left col-xs-5">
                 <h3>支出</h3>
-                <h4 th:inline="text">
+                <h5 th:inline="text">
                     <span class="glyphicon glyphicon-yen"></span>
                     [[${#numbers.formatDecimal(billStatistic.expense, 1, 'COMMA', 2, 'POINT')}]]
-                </h4>
+                </h5>
             </div>
             <div class="pull-left col-xs-5">
                 <h3>收入</h3>
-                <h4 th:inline="text">
+                <h5 th:inline="text">
                     <span class="glyphicon glyphicon-yen"></span>
                     [[${#numbers.formatDecimal(billStatistic.income, 1, 'COMMA', 2, 'POINT')}]]
-                </h4>
+                </h5>
             </div>
         </div>
     </div>
