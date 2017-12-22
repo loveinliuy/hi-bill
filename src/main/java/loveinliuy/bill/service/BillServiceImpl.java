@@ -5,20 +5,21 @@ import loveinliuy.bill.model.BillStatistic;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.User;
 import loveinliuy.bill.repository.BillRepository;
-import loveinliuy.bill.repository.BillRepositoryImpl;
 import loveinliuy.bill.util.IdentityUtil;
 import loveinliuy.bill.util.SessionUtil;
-import org.joda.time.DateTime;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * description:
@@ -44,7 +45,11 @@ public class BillServiceImpl implements BillService {
     public BillStatistic getUserBillStatisticBetweenDateRange(User user, DateRange range) {
         AggregationResults<Map> agg = repository.userTotalBillBetweenDate(user.getId(), range.startDate(), range.endDate());
         List<Map> res = agg.getMappedResults();
-        BillStatistic statistic = BillStatistic.builder().range(range).income(Double.NaN).expense(Double.NaN).build();
+        BillStatistic statistic = BillStatistic.builder()
+                .range(range)
+                .income(NumberUtils.DOUBLE_ZERO)
+                .expense(NumberUtils.DOUBLE_ZERO)
+                .build();
         if (res == null || res.isEmpty()) {
             return statistic;
         }
