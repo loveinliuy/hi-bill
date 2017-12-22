@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-    <title>我家的小账本</title>
-
-    <link rel="stylesheet" href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" href="../../static/css/bootstrap-datepicker.css"
-          th:href="@{/css/bootstrap-datepicker.min.css}"/>
-    <link rel="stylesheet" href="../../static/css/bootstrapValidator.css" th:href="@{/css/bootstrapValidator.min.css}"/>
+<head th:replace="fragments/header :: header">
 </head>
 <body>
+<nav th:replace="fragments/nav :: nav"></nav>
 <div class="container">
+    <div style="height: 60px;"></div>
     <h1>新增记录</h1>
-    <form class="form-horizontal" th:action="@{/bill/add}" method="post"
+    <form id="new-bill-form" class="form-horizontal" th:action="@{/bill/add}" method="post"
           data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
           data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
           data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
@@ -22,10 +15,11 @@
             <label class="col-sm-2 control-label">收支</label>
             <div class="col-sm-10">
                 <label class="radio-inline">
-                    <input type="radio" name="type" id="type-out" value="支出" checked="checked"/>支出
+                    <!--/*@thymesVar id="Type" type="loveinliuy.bill.model.Bill.Type"*/-->
+                    <input type="radio" name="type" id="type-out" th:value="${T(loveinliuy.bill.model.Bill.Type).Expense.name()}" checked="checked"/>支出
                 </label>
                 <label class="radio-inline">
-                    <input type="radio" name="type" id="type-in" value="收入"/>收入
+                    <input type="radio" name="type" id="type-in" th:value="${T(loveinliuy.bill.model.Bill.Type).Income.name()}"/>收入
                 </label>
             </div>
         </div>
@@ -33,13 +27,13 @@
             <label class="col-sm-2 control-label" for="date">日期</label>
             <div class="col-sm-10">
                 <div class="input-group date">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </div>
                     <input type="text" class="form-control" id="date" name="date" value="2015-01-01" placeholder="啥时候"
                            th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
                            data-bv-notempty="true"
                            data-bv-notempty-message="还没选啥时候花的呢"/>
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -77,18 +71,11 @@
     </form>
 </div>
 
-<script src="../../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.min.js}"></script>
-<script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.min.js}"></script>
-<script src="../../static/js/bootstrap-datepicker.js" th:src="@{/js/bootstrap-datepicker.min.js}"></script>
-<script src="../../static/js/locales/bootstrap-datepicker.zh-CN.min.js"
-        th:src="@{/js/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
-<script src="../../static/js/bootstrapValidator.js" th:src="@{/js/bootstrapValidator.js}"></script>
-<script src="../../static/js/locales/bootstrapValidator.zh_CN.js"
-        th:src="@{/js/locales/bootstrapValidator.zh_CN.js}"></script>
+<div th:replace="fragments/footer :: common-js"></div>
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
     $(function () {
-        $('form').bootstrapValidator({
+        $('#new-bill-form').bootstrapValidator({
             fields: {
                 description: {
                     validators: {
@@ -122,9 +109,8 @@
             language: 'zh-CN',
             format: 'yyyy-mm-dd'
         }).on('hide', function () {
-            $('form').data('bootstrapValidator')
-                .updateStatus('date', 'NOT_VALIDATED', null)
-                .validateField('date');
+            $('#new-bill-form').data('bootstrapValidator')
+                .revalidateField('date');
         }).on('changeDate', function () {
             $('.date').datepicker('hide');
         });

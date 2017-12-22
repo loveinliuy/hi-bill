@@ -1,7 +1,11 @@
 package loveinliuy.bill.service;
 
 import loveinliuy.bill.model.Bill;
+import loveinliuy.bill.model.BillStatistic;
+import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.List;
@@ -22,9 +26,28 @@ public interface BillService {
     List<Bill> getUserRecentBills(User user);
 
     /**
+     * 获取一个用户在一个日期区间内的账单统计
+     *
+     * @param user  用户
+     * @param range 日期区间
+     * @return 账单统计结果
+     */
+    BillStatistic getUserBillStatisticBetweenDateRange(User user, DateRange range);
+
+    /**
+     * 获取一个用户在一个日期区间内的账单
+     *
+     * @param user  user
+     * @param page  page
+     * @param range date range
+     * @return 账单结果
+     */
+    Page<Bill> getBillsBetweenDateRange(User user, DateRange range, int page);
+
+    /**
      * 检查指定的描述是否在当天有重复
      *
-     * @param date 指定日期
+     * @param date        指定日期
      * @param description 指定描述
      * @return 重复返回true，反之返回false
      */

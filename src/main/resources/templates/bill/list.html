@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-    <title>我家的小账本</title>
-
-    <link rel="stylesheet" href="../../static/css/bootstrap.css" th:href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" href="../../static/css/bootstrap-datepicker.css"
-          th:href="@{/css/bootstrap-datepicker.min.css}"/>
-    <link rel="stylesheet" href="../../static/css/bootstrapValidator.css" th:href="@{/css/bootstrapValidator.min.css}"/>
-    <link rel="stylesheet" href="../../static/css/bill.css" th:href="@{/css/bill.css}"/>
+<head th:replace="fragments/header :: header">
 </head>
 <body>
+<nav th:replace="fragments/nav :: nav"></nav>
 <div class="container">
     <div style="height:60px;"></div>
 
@@ -23,71 +14,116 @@
         <div class="panel-body bill-statistic">
             <div class="pull-left col-xs-5">
                 <h3>支出</h3>
-                <h4><span class="glyphicon glyphicon-yen"></span>1300.00</h4>
+                <h5 th:inline="text">
+                    <span class="glyphicon glyphicon-yen"></span>
+                    [[${#numbers.formatDecimal(billStatistic.expense, 1, 'COMMA', 2, 'POINT')}]]
+                </h5>
             </div>
             <div class="pull-left col-xs-5">
                 <h3>收入</h3>
-                <h4><span class="glyphicon glyphicon-yen"></span>100.00</h4>
+                <h5 th:inline="text">
+                    <span class="glyphicon glyphicon-yen"></span>
+                    [[${#numbers.formatDecimal(billStatistic.income, 1, 'COMMA', 2, 'POINT')}]]
+                </h5>
             </div>
         </div>
     </div>
 
-    <form method="get" action="">
+    <div class="row">
+        <form id="date-choose-form" method="get" th:action="@{/bill}"
+              data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
+              data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
+              data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+            <div class="form-group col-xs-9" style="padding-right: 0;">
+                <label class="sr-only" for="date">日期</label>
+                <div class="input-group date">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </div>
+                    <input type="text" class="form-control" id="date" name="date" value="2015-01"
+                           th:value="${#dates.format(date, 'yyyy-MM')}"
+                           data-bv-notempty="true"
+                           data-bv-notempty-message="得选看哪个月的"/>
+                </div>
+            </div>
+            <div class="form-group col-xs-3">
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-default">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-    </form>
+    <div class="col-xs-12">
+        <table id="bill-data-table" class="table table-striped">
+            <caption>当前收支详情</caption>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>日期</th>
+                <th>内容</th>
+                <th>金额</th>
+            </tr>
+            </thead>
+            <tbody th:each="bill,billStat : ${bills}">
+            <tr>
+                <th scope="row" th:text="${billStat.index + 1}">1</th>
+                <td th:text="${#dates.format(bill.date, 'MM-dd')}">2015-01-01</td>
+                <td th:text="${bill.description}">账单内容1</td>
+                <td th:text="${#numbers.formatDecimal(bill.cost, 1, 'COMMA', 2, 'POINT')}">10.1</td>
+            </tr>
+            </tbody>
+        </table>
+        <nav class="text-center">
+            <ul id="bill-data-pagination" class="pagination"></ul>
+        </nav>
+    </div>
 </div>
 
-<script src="../../static/js/jquery-3.2.1.js" th:src="@{/js/jquery-3.2.1.min.js}"></script>
-<script src="../../static/js/bootstrap.js" th:src="@{/js/bootstrap.min.js}"></script>
-<script src="../../static/js/bootstrap-datepicker.js" th:src="@{/js/bootstrap-datepicker.min.js}"></script>
-<script src="../../static/js/locales/bootstrap-datepicker.zh-CN.min.js"
-        th:src="@{/js/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
-<script src="../../static/js/bootstrapValidator.js" th:src="@{/js/bootstrapValidator.js}"></script>
-<script src="../../static/js/locales/bootstrapValidator.zh_CN.js"
-        th:src="@{/js/locales/bootstrapValidator.zh_CN.js}"></script>
+<div th:replace="fragments/footer :: common-js"></div>
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
     $(function () {
-        $('form').bootstrapValidator({
-            fields: {
-                description: {
-                    validators: {
-                        remote: {
-                            url: /*[[@{/bill/description/validate}]]*/ '/bill/description/validate',
-                            data: function (validator, $field, value) {
-                                return {
-                                    date: validator.getFieldElements('date').val(),
-                                    description: value
-                                };
-                            },
-                            type: "GET",
-                            delay: 1000,
-                            message: '今天已经写过一个了'
-                        }
-                    }
-                }
-            }
-        });
-        $('input[type=radio][name=type]').click(function () {
-            var $this = $(this);
-            if ($this.val() === '收入') {
-                $('input[name=description]').attr('placeholder', '哪儿来的');
-                $('input[name=cost]').attr('placeholder', '来多钱');
-            } else {
-                $('input[name=description]').attr('placeholder', '哪儿花的');
-                $('input[name=cost]').attr('placeholder', '花多钱');
-            }
-        });
+        $('#date-choose-form').bootstrapValidator();
         $('.date').datepicker({
             language: 'zh-CN',
-            format: 'yyyy-mm-dd'
+            format: 'yyyy-mm',
+            minViewMode: 1,
+            orientation: "bottom left"
         }).on('hide', function () {
-            $('form').data('bootstrapValidator')
-                .updateStatus('date', 'NOT_VALIDATED', null)
-                .validateField('date');
+            $('#date-choose-form').data('bootstrapValidator')
+                .revalidateField($('#date'));
         }).on('changeDate', function () {
             $('.date').datepicker('hide');
         });
+
+        (function () {
+            var totalPages = /*[[${bills.getTotalPages()}]]*/ 100;
+            var currentPage = /*[[${page+1}]]*/1;
+            if (totalPages <= 1 || currentPage <= 0) {
+                return;
+            }
+            $('#bill-data-pagination').jqPaginator({
+                totalPages: totalPages,
+                currentPage: currentPage,
+                visiblePages: 6,
+                first: '',
+                prev: '<li class="prev"><a href="javascript:;">&laquo;</a></li>',
+                next: '<li class="next"><a href="javascript:;">&raquo;</a></li>',
+                last: '',
+                page: '<li class="page"><a href="javascript:;">{{page}}</a></li>',
+                onPageChange: function (num, type) {
+                    if (type === 'change') {
+                        var url = /*[[@{/bill}]]*/ '/bill';
+                        url += '?date=';
+                        url += /*[[${#dates.format(date, 'yyyyMM')}]]*/ '201511';
+                        url += '&page=' + (num - 1);
+                        location.href = url;
+                    }
+                }
+            })
+        })();
+
     });
     /*]]>*/
 </script>

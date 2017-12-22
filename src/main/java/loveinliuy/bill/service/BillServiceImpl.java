@@ -1,17 +1,24 @@
 package loveinliuy.bill.service;
 
 import loveinliuy.bill.model.Bill;
+import loveinliuy.bill.model.BillStatistic;
+import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.User;
 import loveinliuy.bill.repository.BillRepository;
 import loveinliuy.bill.util.IdentityUtil;
 import loveinliuy.bill.util.SessionUtil;
-import org.joda.time.DateTime;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -22,6 +29,8 @@ import java.util.Objects;
 @Service
 public class BillServiceImpl implements BillService {
 
+    private static final int PAGE_SIZE = 10;
+
     @Autowired
     private BillRepository repository;
 
@@ -29,6 +38,40 @@ public class BillServiceImpl implements BillService {
     @Override
     public List<Bill> getUserRecentBills(User user) {
         return repository.findTop5ByUserId(user.getId(), new Sort(Sort.Direction.DESC, Bill.PROP_NAME_ADD_DATE));
+    }
+
+
+    @Override
+    public BillStatistic getUserBillStatisticBetweenDateRange(User user, DateRange range) {
+        AggregationResults<Map> agg = repository.userTotalBillBetweenDate(user.getId(), range.startDate(), range.endDate());
+        List<Map> res = agg.getMappedResults();
+        BillStatistic statistic = BillStatistic.builder()
+                .range(range)
+                .income(NumberUtils.DOUBLE_ZERO)
+                .expense(NumberUtils.DOUBLE_ZERO)
+                .build();
+        if (res == null || res.isEmpty()) {
+            return statistic;
+        }
+        for (Map m : res) {
+            Object key = m.get(Fields.UNDERSCORE_ID);
+            Double money = Double.parseDouble(String.valueOf(m.get(BillRepository.SUM_GROUP_ALIAS)));
+            if (Bill.Type.Income.name().equals(key)) {
+                statistic.setIncome(money);
+            } else if (Bill.Type.Expense.name().equals(key)) {
+                statistic.setExpense(money);
+            } else {
+                throw new IllegalStateException("error key: " + key);
+            }
+        }
+        return statistic;
+    }
+
+    @Override
+    public Page<Bill> getBillsBetweenDateRange(User user, DateRange range, int page) {
+        Sort sort = new Sort(Sort.Direction.DESC, Bill.PROP_NAME_ADD_DATE);
+        PageRequest pageRequest = new PageRequest(page, PAGE_SIZE, sort);
+        return repository.findAllByUserIdAndDateBetween(user.getId(), range.startDate(), range.endDate(), pageRequest);
     }
 
     @Override
