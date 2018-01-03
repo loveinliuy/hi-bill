@@ -54,14 +54,16 @@
         </form>
     </div>
 
-    <ul class="list-group">
+    <ul id="bill-data-list" class="list-group">
         <li class="list-group-item"
             th:each="bill, billStat : ${bills}"
             th:classappend="${bill.type == T(loveinliuy.bill.model.Bill.Type).Expense ? 'list-group-item-warning' : 'list-group-item-success'}">
             <h4 class="list-group-item-heading" th:inline="text">
                 [[${#dates.format(bill.date, 'yyyy-MM-dd')}]]
-                <span style="margin-left: 10px;" class="pull-right glyphicon glyphicon-trash"></span>
-                <span class="pull-right glyphicon glyphicon-pencil"></span>
+                <span style="margin-left: 10px;" data-toggle="modal" data-target="#confirm-delete"
+                      th:attr="data-id=${bill.id}"
+                      class="pull-right glyphicon glyphicon-trash"></span>
+                <!--<span class="pull-right glyphicon glyphicon-pencil"></span>-->
             </h4>
             <h5 th:inline="text">
                 [[${bill.type.toString()}]]
@@ -71,9 +73,29 @@
             <p class="list-group-item-text" th:text="${bill.description}">描述</p>
         </li>
     </ul>
-    <nav class="text-center">
-        <ul id="bill-data-pagination" class="pagination"></ul>
-    </nav>
+
+    <button style="display: none;" type="button" class="loading btn btn-info btn-block">加载中</button>
+    <button style="display:none;" type="button" class="last btn btn-info btn-block">已经是最后一页了</button>
+
+</div>
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">删除确认</h4>
+            </div>
+            <div class="modal-body">
+                <p>确认删除么？删除后不可以恢复!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary confirm">确认</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div th:replace="fragments/footer :: common-js"></div>
@@ -94,32 +116,110 @@
         });
 
         (function () {
-            var totalPages = /*[[${bills.getTotalPages()}]]*/ 100;
             var currentPage = /*[[${page+1}]]*/1;
-            if (totalPages <= 1 || currentPage <= 0) {
-                return;
-            }
-            $('#bill-data-pagination').jqPaginator({
-                totalPages: totalPages,
-                currentPage: currentPage,
-                visiblePages: 6,
-                first: '',
-                prev: '<li class="prev"><a href="javascript:;">&laquo;</a></li>',
-                next: '<li class="next"><a href="javascript:;">&raquo;</a></li>',
-                last: '',
-                page: '<li class="page"><a href="javascript:;">{{page}}</a></li>',
-                onPageChange: function (num, type) {
-                    if (type === 'change') {
-                        var url = /*[[@{/bill}]]*/ '/bill';
-                        url += '?date=';
-                        url += /*[[${#dates.format(date, 'yyyyMM')}]]*/ '201511';
-                        url += '&page=' + (num - 1);
-                        location.href = url;
-                    }
+            var date = $('#date').val();
+            var isFetching = false;
+            var isLast = false;
+            var $loading = $('.loading');
+            var l = Ladda.create($loading[0]);
+
+            function renderList(bill) {
+                var items = [];
+                var type = '';
+                var typeStr = '';
+                if (bill.type === 'Income') {
+                    type = 'list-group-item-success';
+                    typeStr = '收入';
+                } else {
+                    type = 'list-group-item-warning';
+                    typeStr = '支出';
                 }
-            })
+                var date = new Date(bill.date);
+                items.push('<li class="list-group-item ' + type + '">');
+                items.push('<h4 class="list-group-item-heading">');
+                items.push(date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate());
+                items.push('<span style="margin-left: 10px;" class="pull-right glyphicon glyphicon-trash" data-toggle="modal" data-target="#confirm-delete" data-id="' + bill.id + '"></span>');
+                // items.push('<span class="pull-right glyphicon glyphicon-pencil"></span>');
+                items.push('</h4>');
+                items.push('<h5>');
+                items.push(typeStr);
+                items.push('<span style="margin-left: 2px;" class="glyphicon glyphicon-yen"></span>');
+                items.push(parseFloat(bill.cost).toFixed(2));
+                items.push('</h5>');
+                items.push('<p class="list-group-item-text">' + bill.description + '</p>');
+                items.push('</li>');
+                return items.join('');
+            }
+
+            function fetchNextPage() {
+                if (isFetching || isLast) {
+                    return;
+                }
+                isFetching = true;
+                $loading.show();
+                l.start();
+                l.setProgress(0.3);
+                $.ajax({
+                        url: /*[[@{/bill/list}]]*/ '/bill/list',
+                        data: {
+                            date: date,
+                            page: currentPage
+                        },
+                        success: function (result) {
+                            l.setProgress(0.7);
+                            var c = result.content;
+                            var items = [];
+                            for (var i = 0; i < c.length; i++) {
+                                items.push(renderList(c[i]));
+                                l.setProgress(0.7 + 0.02 * i);
+                            }
+                            $('#bill-data-list').append(items.join(''));
+                            if (result.last) {
+                                $('.last').show();
+                                isLast = true;
+                            }
+                            currentPage++;
+                            l.stop();
+                            $loading.hide();
+                            isFetching = false;
+                        }
+                    }
+                );
+            }
+
+            $(window).scroll(function () {
+                var scrollTop = $(this).scrollTop();
+                var scrollHeight = $(document).height();
+                var windowHeight = $(this).height();
+                if (scrollTop + windowHeight === scrollHeight) {
+                    fetchNextPage();
+                }
+            });
         })();
 
+        $('#confirm-delete').on('show.bs.modal', function (event) {
+            var $target = $(event.relatedTarget);
+            var $li = $target.parent().parent();
+
+            $('#confirm-delete').find('.confirm').unbind().bind('click', function () {
+                var id = $target.attr('data-id');
+                var url = /*[[@{/bill}]]*/ '/bill';
+                var _csrf = $('input[name="_csrf"]').val();
+                $.ajax({
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': _csrf
+                    },
+                    url: url + '/' + id,
+                    success: function (result) {
+                        if (result) {
+                            $li.remove();
+                            $('#confirm-delete').modal('hide');
+                        }
+                    }
+                });
+            });
+        });
     });
     /*]]>*/
 </script>

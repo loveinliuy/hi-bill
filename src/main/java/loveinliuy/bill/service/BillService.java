@@ -68,4 +68,13 @@ public interface BillService {
      * @return 账单详情
      */
     Bill get(String id);
+
+    /**
+     * 删除指定用户指定id的账单信息
+     *
+     * @param user 用户
+     * @param id id
+     * @return 删除情况
+     */
+    boolean delete(User user, String id);
 }

@@ -37,9 +37,6 @@ public interface BillRepository extends MongoRepository<Bill, String>, BillRepos
      */
     Page<Bill> findAllByUserIdAndDateBetween(String userId, Date start, Date end, Pageable pageable);
 
-
-    @Query
-    void queryBy();
     /**
      * 根据日期和描述获取账单信息
      *
@@ -48,5 +45,13 @@ public interface BillRepository extends MongoRepository<Bill, String>, BillRepos
      * @return 账单信息
      */
     Bill findByDateAndDescription(Date date, String description);
+
+    /**
+     * 根据id和userId删除账单信息
+     *
+     * @param userId userId
+     * @param id     id
+     */
+    void deleteBillByUserIdAndId(String userId, String id);
 
 }

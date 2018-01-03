@@ -93,4 +93,10 @@ public class BillServiceImpl implements BillService {
     public Bill get(String id) {
         return repository.findOne(id);
     }
+
+    @Override
+    public boolean delete(User user, String id) {
+        repository.deleteBillByUserIdAndId(user.getId(), id);
+        return true;
+    }
 }
