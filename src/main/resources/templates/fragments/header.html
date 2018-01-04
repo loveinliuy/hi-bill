@@ -7,9 +7,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/bootstrapValidator.min.css}"/>
+    <!--/*@thymesVar id="debug" type="boolean"*/-->
+    <link rel="stylesheet" th:if="${debug}" th:href="@{/css/bootstrap.css}"/>
+    <link rel="stylesheet" th:unless="${debug}" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" th:if="${debug}" th:href="@{/css/bootstrap-datepicker.css}"/>
+    <link rel="stylesheet" th:unless="${debug}"
+          href="//cdn.bootcss.com/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css"/>
+    <link rel="stylesheet" th:if="${debug}" th:href="@{/css/bootstrapValidator.css}"/>
+    <link rel="stylesheet" th:unless="${debug}" th:href="@{/css/bootstrapValidator.min.css}"/>
+    <link href="//cdn.bootcss.com/Ladda/1.0.5/ladda.min.css" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/bill.css}"/>
+    <link rel="stylesheet" th:href="@{/css/login.css}"/>
 </head>
 </html>

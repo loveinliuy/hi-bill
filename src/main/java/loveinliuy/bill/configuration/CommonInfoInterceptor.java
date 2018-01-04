@@ -1,6 +1,9 @@
 package loveinliuy.bill.configuration;
 
+import loveinliuy.bill.config.AppConfig;
 import loveinliuy.bill.util.SessionUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -18,6 +21,9 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class CommonInfoInterceptor implements HandlerInterceptor {
 
+    @Autowired
+    private AppConfig config;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         return true;
@@ -29,6 +35,8 @@ public class CommonInfoInterceptor implements HandlerInterceptor {
             return;
         }
         ModelMap model = modelAndView.getModelMap();
+
+        model.addAttribute("debug", config.isDebug());
         model.addAttribute("curUser", SessionUtil.getCurrentUser().orElse(null));
     }
 

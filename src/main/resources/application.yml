@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/bill
+      uri: mongodb://172.18.13.1:27017/bill
   http:
     encoding:
       charset: utf-8
@@ -10,3 +10,6 @@ spring:
 
 logging:
   level: debug
+
+bill:
+  mode: debug
