@@ -16,11 +16,29 @@
             <div class="col-sm-10">
                 <label class="radio-inline">
                     <!--/*@thymesVar id="Type" type="loveinliuy.bill.model.Bill.Type"*/-->
-                    <input type="radio" name="type" id="type-out" th:value="${T(loveinliuy.bill.model.Bill.Type).Expense.name()}" checked="checked"/>支出
+                    <input type="radio" name="type" id="type-out"
+                           th:value="${T(loveinliuy.bill.model.Bill.Type).Expense.name()}" checked="checked"/>支出
                 </label>
                 <label class="radio-inline">
-                    <input type="radio" name="type" id="type-in" th:value="${T(loveinliuy.bill.model.Bill.Type).Income.name()}"/>收入
+                    <input type="radio" name="type" id="type-in"
+                           th:value="${T(loveinliuy.bill.model.Bill.Type).Income.name()}"/>收入
                 </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="costTypeId">类型</label>
+            <div class="col-sm-10">
+                <select id="costTypeId" class="form-control" onchange="setCostType()">
+                    <option type="all" value="-1">不好分类</option>
+                    <option th:each="type,stat : ${costTypes}"
+                            th:text="${type.name}"
+                            th:value="${type.id}"
+                            th:attr="type=${type.type.name()}"
+                            th:class="${type.type.equals(T(loveinliuy.bill.model.Bill.Type).Income) ? 'hidden' : 'show'}">
+                        类型1
+                    </option>
+                </select>
+                <input type="hidden" name="costType" value=""/>
             </div>
         </div>
         <div class="form-group">
@@ -74,7 +92,16 @@
 <div th:replace="fragments/footer :: common-js"></div>
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
+    function setCostType() {
+        var $costTypeSelect = $("#costTypeId");
+        var text = $costTypeSelect.find('option:selected').text();
+        $('input[name=costType]').val(text);
+    }
+
     $(function () {
+        // 设置代码类型值
+        setCostType();
+        // 设置表单验证
         $('#new-bill-form').bootstrapValidator({
             fields: {
                 description: {
@@ -95,16 +122,37 @@
                 }
             }
         });
+        // 设置切换项目控制
         $('input[type=radio][name=type]').click(function () {
             var $this = $(this);
             if ($this.val() === 'Income') {
                 $('input[name=description]').attr('placeholder', '哪儿来的');
                 $('input[name=cost]').attr('placeholder', '来多钱');
+                $('#costTypeId').val('-1').find("option").each(function () {
+                    var $this = $(this);
+                    var type = $this.attr('type');
+                    if (type === 'Income') {
+                        $this.removeClass("hidden").addClass("show");
+                    } else if (type === 'Expense') {
+                        $this.removeClass("show").addClass("hidden");
+                    }
+                });
             } else {
                 $('input[name=description]').attr('placeholder', '哪儿花的');
                 $('input[name=cost]').attr('placeholder', '花多钱');
+                $('#costTypeId').val('-1').find("option").each(function () {
+                    var $this = $(this);
+                    var type = $this.attr('type');
+                    if (type === 'Expense') {
+                        $this.removeClass("hidden").addClass("show");
+                    } else if (type === 'Income') {
+                        $this.removeClass("show").addClass("hidden");
+                    }
+                });
             }
+            setCostType();
         });
+        // 设置日期选择器
         $('.date').datepicker({
             language: 'zh-CN',
             format: 'yyyy-mm-dd'
