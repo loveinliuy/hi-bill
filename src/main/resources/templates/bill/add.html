@@ -26,10 +26,10 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label" for="costTypeId">类型</label>
+            <label class="col-sm-2 control-label" for="costTypeSel">类型</label>
             <div class="col-sm-10">
-                <select id="costTypeId" class="form-control" onchange="setCostType()">
-                    <option type="all" value="-1">不好分类</option>
+                <select id="costTypeSel" class="form-control" onchange="setCostType()">
+                    <option type="all" selected="selected" value=""></option>
                     <option th:each="type,stat : ${costTypes}"
                             th:text="${type.name}"
                             th:value="${type.id}"
@@ -39,6 +39,7 @@
                     </option>
                 </select>
                 <input type="hidden" name="costType" value=""/>
+                <input type="hidden" name="costTypeId" value=""/>
             </div>
         </div>
         <div class="form-group">
@@ -93,9 +94,9 @@
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
     function setCostType() {
-        var $costTypeSelect = $("#costTypeId");
-        var text = $costTypeSelect.find('option:selected').text();
-        $('input[name=costType]').val(text);
+        var $costTypeSelect = $("#costTypeSel");
+        $('input[name=costType]').val($costTypeSelect.find('option:selected').text());
+        $('input[name=costTypeId]').val($costTypeSelect.val());
     }
 
     $(function () {
@@ -128,7 +129,7 @@
             if ($this.val() === 'Income') {
                 $('input[name=description]').attr('placeholder', '哪儿来的');
                 $('input[name=cost]').attr('placeholder', '来多钱');
-                $('#costTypeId').val('-1').find("option").each(function () {
+                $('#costTypeSel').val('').find("option").each(function () {
                     var $this = $(this);
                     var type = $this.attr('type');
                     if (type === 'Income') {
@@ -140,7 +141,7 @@
             } else {
                 $('input[name=description]').attr('placeholder', '哪儿花的');
                 $('input[name=cost]').attr('placeholder', '花多钱');
-                $('#costTypeId').val('-1').find("option").each(function () {
+                $('#costTypeSel').val('').find("option").each(function () {
                     var $this = $(this);
                     var type = $this.attr('type');
                     if (type === 'Expense') {
