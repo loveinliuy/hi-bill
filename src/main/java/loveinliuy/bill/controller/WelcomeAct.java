@@ -1,6 +1,5 @@
 package loveinliuy.bill.controller;
 
-import loveinliuy.bill.model.User;
 import loveinliuy.bill.service.BillService;
 import loveinliuy.bill.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;

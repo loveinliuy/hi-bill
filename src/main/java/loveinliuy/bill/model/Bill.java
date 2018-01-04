@@ -58,6 +58,16 @@ public class Bill implements Serializable {
     private Type type;
 
     /**
+     * 消费类型，存消费类型id
+     */
+    private String costTypeId;
+
+    /**
+     * 消费类型，只存消费类型名称
+     */
+    private String costType;
+
+    /**
      * 描述
      */
     private String description;
@@ -74,7 +84,13 @@ public class Bill implements Serializable {
     private Date addDate;
 
     public enum Type {
+        /**
+         * 收入
+         */
         Income("收入"),
+        /**
+         * 支出
+         */
         Expense("支出");
 
         String description;

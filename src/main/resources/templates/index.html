@@ -8,6 +8,8 @@
     <div style="height: 60px;"></div>
     <!--/*@thymesVar id="curUser" type="loveinliuy.bill.model.User"*/-->
     <h1 th:text="'您好，'+${curUser.realName}">你好！</h1>
+    <br/>
+    <a class="btn btn-default" th:href="@{/bill/add}">新增账单</a>
     <div class="col-xs">
         <table class="table table-striped">
             <caption>最新添加的信息</caption>
@@ -29,7 +31,6 @@
             </tbody>
         </table>
     </div>
-    <a class="btn btn-default" th:href="@{/bill/add}">新增账单</a>
 
 </div>
 

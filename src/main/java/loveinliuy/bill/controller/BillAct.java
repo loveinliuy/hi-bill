@@ -98,6 +98,12 @@ public class BillAct {
         return Collections.singletonMap("valid", !writeToday);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/{type}/costType")
+    public Map<String, Object> costType(@PathVariable Bill.Type type){
+        return Collections.singletonMap("costTypes", service.getCostTypesByBillType(type));
+    }
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String save(Bill bill) {
         Preconditions.checkNotNull(bill, "账单信息不能为空");

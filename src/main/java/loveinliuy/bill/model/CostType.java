@@ -1,6 +1,7 @@
 package loveinliuy.bill.model;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @author zhangshibo  [2018/1/4].
  */
 @Data
+@Builder
 public class CostType implements Serializable{
 
     /**
@@ -25,11 +27,6 @@ public class CostType implements Serializable{
      * 账单类型
      */
     private Bill.Type type;
-
-    /**
-     * 上级类型
-     */
-    private String parentId;
 
     /**
      * 名称

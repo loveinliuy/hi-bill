@@ -31,7 +31,7 @@ public class CommonInfoInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if (modelAndView == null) {
+        if (modelAndView == null || modelAndView.getViewName().startsWith("redirect")) {
             return;
         }
         ModelMap model = modelAndView.getModelMap();
