@@ -74,9 +74,10 @@
         </li>
     </ul>
 
-    <button style="display: none;" type="button" class="loading btn btn-info btn-block">加载中</button>
+    <button type="button" class="loading btn btn-info btn-block">加载中</button>
     <button style="display:none;" type="button" class="last btn btn-info btn-block">已经是最后一页了</button>
 
+    <div style="height: 100px"></div>
 </div>
 <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -88,6 +89,8 @@
                 <h4 class="modal-title">删除确认</h4>
             </div>
             <div class="modal-body">
+                <p>即将删除内容：</p>
+                <p class="nr"></p>
                 <p>确认删除么？删除后不可以恢复!</p>
             </div>
             <div class="modal-footer">
@@ -123,6 +126,14 @@
             var $loading = $('.loading');
             var l = Ladda.create($loading[0]);
 
+            function fillZero(n) {
+                if (n < 10) {
+                    return '0' + n;
+                } else {
+                    return '' + n;
+                }
+            }
+
             function renderList(bill) {
                 var items = [];
                 var type = '';
@@ -137,7 +148,7 @@
                 var date = new Date(bill.date);
                 items.push('<li class="list-group-item ' + type + '">');
                 items.push('<h4 class="list-group-item-heading">');
-                items.push(date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate());
+                items.push(date.getFullYear() + '-' + fillZero(date.getMonth() + 1) + '-' + fillZero(date.getDate()));
                 items.push('<span style="margin-left: 10px;" class="pull-right glyphicon glyphicon-trash" data-toggle="modal" data-target="#confirm-delete" data-id="' + bill.id + '"></span>');
                 // items.push('<span class="pull-right glyphicon glyphicon-pencil"></span>');
                 items.push('</h4>');
@@ -156,7 +167,6 @@
                     return;
                 }
                 isFetching = true;
-                $loading.show();
                 l.start();
                 l.setProgress(0.3);
                 $.ajax({
@@ -176,11 +186,11 @@
                             $('#bill-data-list').append(items.join(''));
                             if (result.last) {
                                 $('.last').show();
+                                $loading.hide();
                                 isLast = true;
                             }
                             currentPage++;
                             l.stop();
-                            $loading.hide();
                             isFetching = false;
                         }
                     }
@@ -191,7 +201,8 @@
                 var scrollTop = $(this).scrollTop();
                 var scrollHeight = $(document).height();
                 var windowHeight = $(this).height();
-                if (scrollTop + windowHeight === scrollHeight) {
+                // console.log(scrollTop+'+'+windowHeight+'+100 >= '+scrollHeight)
+                if (scrollTop + windowHeight + 100 >= scrollHeight) {
                     fetchNextPage();
                 }
             });
@@ -200,8 +211,14 @@
         $('#confirm-delete').on('show.bs.modal', function (event) {
             var $target = $(event.relatedTarget);
             var $li = $target.parent().parent();
+            var date = $li.find('h4').text();
+            var cost = $li.find('h5').html();
+            var desc = $li.find('p').html();
 
-            $('#confirm-delete').find('.confirm').unbind().bind('click', function () {
+            var $this = $(this);
+            $this.find('.nr').html(date + '<br/>' + cost + '<br/>' + desc);
+
+            $this.find('.confirm').unbind().bind('click', function () {
                 var id = $target.attr('data-id');
                 var url = /*[[@{/bill}]]*/ '/bill';
                 var _csrf = $('input[name="_csrf"]').val();
