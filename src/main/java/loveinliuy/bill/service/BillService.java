@@ -56,10 +56,11 @@ public interface BillService {
     /**
      * 获取账单类型对应的消费类型
      *
-     * @param type type
+     * @param user 当前用户
+     * @param types type
      * @return 消费类型列表
      */
-    List<CostType> getCostTypesByBillType(Bill.Type type);
+    List<CostType> getCostTypesByBillType(User user, Bill.Type... types);
 
     /**
      * 保存一个账单

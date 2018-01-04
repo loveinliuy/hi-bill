@@ -86,8 +86,8 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<CostType> getCostTypesByBillType(Bill.Type type) {
-        return costTypeRepository.findCostTypesByTypeOrderByPriorityAsc(type);
+    public List<CostType> getCostTypesByBillType(User user, Bill.Type... types) {
+        return costTypeRepository.findCostTypesByUserIdAndTypeInOrderByPriorityAsc(user.getId(), types);
     }
 
     @Override

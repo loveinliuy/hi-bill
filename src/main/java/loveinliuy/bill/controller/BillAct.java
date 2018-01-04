@@ -6,6 +6,7 @@ import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.Message;
+import loveinliuy.bill.model.User;
 import loveinliuy.bill.service.BillService;
 import loveinliuy.bill.util.DateUtil;
 import loveinliuy.bill.util.SessionUtil;
@@ -83,8 +84,8 @@ public class BillAct {
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String save(Model model) {
-        List<CostType> typesList = new ArrayList<>(service.getCostTypesByBillType(Bill.Type.Expense));
-        typesList.addAll(service.getCostTypesByBillType(Bill.Type.Income));
+        User user = SessionUtil.getCurrentUser().orElseThrow(IllegalStateException::new);
+        List<CostType> typesList = new ArrayList<>(service.getCostTypesByBillType(user, Bill.Type.values()));
         model.addAttribute("costTypes", typesList);
         return "bill/add";
     }
