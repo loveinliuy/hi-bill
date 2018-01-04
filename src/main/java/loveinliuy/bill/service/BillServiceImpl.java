@@ -2,9 +2,11 @@ package loveinliuy.bill.service;
 
 import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.BillStatistic;
+import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.User;
 import loveinliuy.bill.repository.BillRepository;
+import loveinliuy.bill.repository.CostTypeRepository;
 import loveinliuy.bill.util.IdentityUtil;
 import loveinliuy.bill.util.SessionUtil;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -33,6 +35,9 @@ public class BillServiceImpl implements BillService {
 
     @Autowired
     private BillRepository repository;
+
+    @Autowired
+    private CostTypeRepository costTypeRepository;
 
 
     @Override
@@ -78,6 +83,11 @@ public class BillServiceImpl implements BillService {
     public boolean isWriteThatDay(Date date, String description) {
         Bill bill = repository.findByDateAndDescription(date, description);
         return Objects.nonNull(bill);
+    }
+
+    @Override
+    public List<CostType> getCostTypesByBillType(Bill.Type type) {
+        return costTypeRepository.findCostTypesByTypeOrderByPriorityAsc(type);
     }
 
     @Override

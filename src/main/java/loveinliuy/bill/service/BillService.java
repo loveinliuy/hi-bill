@@ -2,10 +2,10 @@ package loveinliuy.bill.service;
 
 import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.BillStatistic;
+import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.User;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.List;
@@ -54,6 +54,14 @@ public interface BillService {
     boolean isWriteThatDay(Date date, String description);
 
     /**
+     * 获取账单类型对应的消费类型
+     *
+     * @param type type
+     * @return 消费类型列表
+     */
+    List<CostType> getCostTypesByBillType(Bill.Type type);
+
+    /**
      * 保存一个账单
      *
      * @param bill 账单
@@ -73,7 +81,7 @@ public interface BillService {
      * 删除指定用户指定id的账单信息
      *
      * @param user 用户
-     * @param id id
+     * @param id   id
      * @return 删除情况
      */
     boolean delete(User user, String id);

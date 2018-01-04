@@ -3,6 +3,7 @@ package loveinliuy.bill.controller;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import loveinliuy.bill.model.Bill;
+import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.Message;
 import loveinliuy.bill.service.BillService;
@@ -20,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,7 +82,10 @@ public class BillAct {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String save() {
+    public String save(Model model) {
+        List<CostType> typesList = new ArrayList<>(service.getCostTypesByBillType(Bill.Type.Expense));
+        typesList.addAll(service.getCostTypesByBillType(Bill.Type.Income));
+        model.addAttribute("costTypes", typesList);
         return "bill/add";
     }
 

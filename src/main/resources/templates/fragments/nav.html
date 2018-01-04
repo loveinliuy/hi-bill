@@ -18,8 +18,20 @@
                 <li role="presentation" th:class="${#httpServletRequest.getRequestURI() == '/index'} ? 'active'">
                     <a th:href="@{/}">首页</a>
                 </li>
-                <li role="presentation" th:class="${#httpServletRequest.getRequestURI() == '/bill'} ? 'active'">
-                    <a th:href="@{/bill}">账单查询</a>
+                <li role="presentation"
+                    th:class="${#httpServletRequest.getRequestURI().startsWith('/bill')} ? 'active'">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        账单<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li th:class="${#httpServletRequest.getRequestURI() == '/bill/add'} ? 'active'">
+                            <a th:href="@{/bill/add}">添加</a>
+                        </li>
+                        <li th:class="${#httpServletRequest.getRequestURI() == '/bill'} ? 'active'">
+                            <a th:href="@{/bill}">查看</a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

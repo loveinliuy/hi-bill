@@ -69,6 +69,8 @@
                 [[${bill.type.toString()}]]
                 <span style="margin-left: 2px;" class="glyphicon glyphicon-yen"></span>
                 [[${#numbers.formatDecimal(bill.cost, 1, 'COMMA', 2, 'POINT')}]]
+                <span th:unless="${#strings.isEmpty(bill.costType)}" style="margin-left: 10px;" class="glyphicon glyphicon-tag"></span>
+                [[${#strings.defaultString(bill.costType, '')}]]
             </h5>
             <p class="list-group-item-text" th:text="${bill.description}">描述</p>
         </li>
@@ -156,6 +158,10 @@
                 items.push(typeStr);
                 items.push('<span style="margin-left: 2px;" class="glyphicon glyphicon-yen"></span>');
                 items.push(parseFloat(bill.cost).toFixed(2));
+                if (bill.costType) {
+                    items.push('<span style="margin-left: 10px;" class="glyphicon glyphicon-tag"></span>');
+                    items.push(bill.costType);
+                }
                 items.push('</h5>');
                 items.push('<p class="list-group-item-text">' + bill.description + '</p>');
                 items.push('</li>');
