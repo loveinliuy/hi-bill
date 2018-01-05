@@ -2,13 +2,13 @@ package loveinliuy.bill.service;
 
 import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.BillStatistic;
-import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.User;
 import org.springframework.data.domain.Page;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description:
@@ -32,7 +32,16 @@ public interface BillService {
      * @param range 日期区间
      * @return 账单统计结果
      */
-    BillStatistic getUserBillStatisticBetweenDateRange(User user, DateRange range);
+    Map<String, BillStatistic> getUserBillStatisticBetweenDateRange(User user, DateRange range);
+
+    /**
+     * 获取一个用户在一个日期区间内的账单统计，根据消费类型分组
+     *
+     * @param user  用户
+     * @param range 日期区间
+     * @return 账单统计
+     */
+    List<BillStatistic> getUserBillStatisticBetweenDateRangeGroupByCostType(User user, DateRange range);
 
     /**
      * 获取一个用户在一个日期区间内的账单
@@ -52,15 +61,6 @@ public interface BillService {
      * @return 重复返回true，反之返回false
      */
     boolean isWriteThatDay(Date date, String description);
-
-    /**
-     * 获取账单类型对应的消费类型
-     *
-     * @param user 当前用户
-     * @param types type
-     * @return 消费类型列表
-     */
-    List<CostType> getCostTypesByBillType(User user, Bill.Type... types);
 
     /**
      * 保存一个账单

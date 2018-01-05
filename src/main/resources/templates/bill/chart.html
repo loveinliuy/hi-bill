@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+</head>
+<body>
+<nav th:replace="fragments/nav :: nav"></nav>
+<div class="container">
+    <div style="height:60px;"></div>
+    <h3>收入支出类型统计图</h3>
+
+    <form id="date-choose-form" method="get" th:action="@{/bill/chart}"
+          data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
+          data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
+          data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+        <div class="row">
+            <div class="form-group col-xs-9" style="padding-right: 0;">
+                <label class="sr-only" for="date">日期</label>
+                <div class="input-group date">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </div>
+                    <input type="text" class="form-control" id="date" name="date" value="2015-01"
+                           th:value="${#dates.format(date, 'yyyy-MM')}"
+                           data-bv-notempty="true"
+                           data-bv-notempty-message="得选看哪个月的"/>
+                </div>
+            </div>
+            <div class="form-group col-xs-3">
+                <button type="submit" class="btn btn-default">查询</button>
+            </div>
+        </div>
+    </form>
+    <form>
+        <div class="form-group">
+            <label class="control-label">收入</label>
+            <div class="col-sm-10">
+                <label class="checkbox-inline" th:each="s, stat : ${statistics}"
+                       th:if="${s.type.name() == 'Income'}">
+                    <input type="checkbox" th:attr="id=${'type-income-'+stat.index}, data-index=${stat.index}"
+                           checked="checked"
+                           th:value="${#strings.defaultString(s.costType, '未知')}"/>
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label">支出</label>
+            <div class="col-sm-10">
+                <label class="checkbox-inline" th:each="s, stat : ${statistics}" th:if="${s.type.name() == 'Expense'}">
+                    <input type="checkbox" th:attr="id=${'type-expense-'+stat.index}, data-index=${stat.index}"
+                           checked="checked"
+                           th:value="${#strings.defaultString(s.costType, '未知')}"/>
+                </label>
+            </div>
+        </div>
+    </form>
+
+    <div class="col-xs-12" style="height: 500px;" th:style="'height:'+${statistics.size()*100}+'px'" id="chart">
+    </div>
+
+</div>
+<div th:replace="fragments/footer :: common-js"></div>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        var groupData = /*[[${statistics}]]*/ [];
+        var chart = echarts.init(document.getElementById('chart'));
+        var axisData = [];
+        var seriesData = [];
+        var incomeLabel = {
+            normal: {
+                position: 'left'
+            }
+        };
+        var expenseLabel = {
+            normal: {
+                position: 'right'
+            }
+        };
+        for (var i = 0; i < groupData.length; i++) {
+            var cur = groupData[i];
+            axisData.push(cur.costType);
+            if (cur.type.$name === 'Income') {
+                seriesData.push({value: cur.total, label: incomeLabel});
+            } else {
+                seriesData.push({value: -cur.total, label: expenseLabel});
+            }
+        }
+        var option = {
+            xAxis: {
+                type: 'value',
+                position: 'top',
+                splitLine: {lineStyle: {type: 'dashed'}}
+            },
+            yAxis: {
+                type: 'category',
+                axisLine: {show: false},
+                axisLabel: {show: false},
+                axisTick: {show: false},
+                splitLine: {show: false},
+                data: axisData
+            },
+            series: [
+                {
+                    type: 'bar',
+                    label: {
+                        normal: {
+                            show: true,
+                            formatter: '{b}: {c}',
+                            position: 'right'
+                        }
+                    },
+                    data: seriesData
+                }
+            ]
+        };
+        chart.setOption(option);
+
+        $('#date-choose-form').bootstrapValidator();
+        $('.date').datepicker({
+            language: 'zh-CN',
+            format: 'yyyy-mm',
+            minViewMode: 1,
+            orientation: "bottom left"
+        }).on('hide', function () {
+            $('#date-choose-form').data('bootstrapValidator')
+                .revalidateField($('#date'));
+        }).on('changeDate', function () {
+            $('.date').datepicker('hide');
+        });
+        // checkbox 变更样式
+        $('input[type=checkbox]').click(function () {
+            var checkIndex = {};
+            $('input[type=checkbox]').each(function () {
+                var $this = $(this);
+                var index = $this.attr("data-index");
+                checkIndex[index] = $this[0].checked;
+            });
+            var changedAxisData = [];
+            var changedSeriesData = [];
+            for (var i = 0; i < groupData.length; i++) {
+                if (!checkIndex[i]) {
+                    continue;
+                }
+                var cur = groupData[i];
+                changedAxisData.push(cur.costType);
+                if (cur.type.$name === 'Income') {
+                    changedSeriesData.push({value: cur.total, label: incomeLabel});
+                } else {
+                    changedSeriesData.push({value: -cur.total, label: expenseLabel});
+                }
+            }
+            chart.setOption({
+                xAxis: {
+                    data: changedAxisData
+                },
+                series: [{
+                    data: changedSeriesData
+                }]
+            });
+        });
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

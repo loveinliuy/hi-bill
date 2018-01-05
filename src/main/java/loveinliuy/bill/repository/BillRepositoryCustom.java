@@ -1,5 +1,6 @@
 package loveinliuy.bill.repository;
 
+import loveinliuy.bill.model.BillStatistic;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 
 import java.util.Date;
@@ -24,4 +25,14 @@ public interface BillRepositoryCustom {
      * @return 聚合结果
      */
     AggregationResults<Map> userTotalBillBetweenDate(String userId, Date start, Date end);
+
+    /**
+     * 获取用户在一个时间区间范围内的账单，并按照消费类型分组
+     *
+     * @param userId 用户
+     * @param start  时间区间开始
+     * @param end    时间区间结束
+     * @return 账单结果
+     */
+    AggregationResults<BillStatistic> userBillBetweenDateRangeGroupByCostType(String userId, Date start, Date end);
 }

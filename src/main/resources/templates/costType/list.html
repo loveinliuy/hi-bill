@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header">
+</head>
+<body>
+<nav th:replace="fragments/nav :: nav"></nav>
+<div class="container">
+    <div style="height: 60px;"></div>
+    <div class="row">
+        <div class="col-xs-12">
+            <a class="btn btn-default" th:href="@{/costType/add}">
+                <span class="glyphicon glyphicon-plus"></span>
+                新增类型
+            </a>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <table class="table table-striped">
+            <caption>当前消费类型</caption>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>类型</th>
+                <th>名称</th>
+            </tr>
+            </thead>
+            <tbody th:each="costType,stat : ${costTypes}">
+            <tr>
+                <th scope="row" th:text="${stat.index + 1}">1</th>
+                <td th:text="${costType.type.toString()}">收入</td>
+                <td th:text="${costType.name}">名称</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div th:replace="fragments/footer :: common-js"></div>
+</body>
+</html>

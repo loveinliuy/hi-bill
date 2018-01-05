@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+</head>
+<body>
+<nav th:replace="fragments/nav :: nav"></nav>
+<div class="container">
+    <div style="height: 60px;"></div>
+    <h1>新增记录</h1>
+    <form id="new-cost-type-form" class="form-horizontal" th:action="@{/costType/save}" method="post"
+          data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
+          data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
+          data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">类型</label>
+            <div class="col-sm-10">
+                <label class="radio-inline">
+                    <!--/*@thymesVar id="Type" type="loveinliuy.bill.model.Bill.Type"*/-->
+                    <input type="radio" name="type" id="type-out"
+                           th:value="${T(loveinliuy.bill.model.Bill.Type).Expense.name()}" checked="checked"/>支出
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="type" id="type-in"
+                           th:value="${T(loveinliuy.bill.model.Bill.Type).Income.name()}"/>收入
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="name">名称</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="name" id="name" placeholder="分类名称"
+                       data-bv-notempty="true"
+                       data-bv-notempty-message="需要输入分类名称"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="priority">顺序</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="priority" id="priority" placeholder="排列顺序，小的靠前" value="10"
+                       data-bv-notempty="true"
+                       data-bv-notempty-message="需要输入排列顺序"
+                       data-bv-regexp="true"
+                       data-bv-regexp-regexp="^([1-9]\d{0,9})?$"
+                       data-bv-regexp-message="填正确的数字"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row col-sm-offset-2 col-sm-10">
+                <div class="col-sm-4 pull-right">
+                    <button type="submit" class="btn btn-default">提交</button>
+                    <a role="button" th:href="@{/index}" class="btn btn-default">取消</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div th:replace="fragments/footer :: common-js"></div>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        // 设置表单验证
+        $('#new-cost-type-form').bootstrapValidator({
+            fields: {
+                name: {
+                    validators: {
+                        remote: {
+                            url: /*[[@{/costType/name/validate}]]*/ '/costType/name/validate',
+                            data: function (validator, $field, value) {
+                                return {
+                                    type: $('input[name=type]:checked').val(),
+                                    name: value
+                                };
+                            },
+                            type: "GET",
+                            delay: 1000,
+                            message: '该分类下有重复'
+                        }
+                    }
+                }
+            }
+
+        });
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

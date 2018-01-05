@@ -32,6 +32,10 @@ public class Bill implements Serializable {
      */
     public static final String PROP_NAME_COST = "cost";
 
+    public static final String PROP_NAME_COST_TYPE_ID = "costTypeId";
+
+    public static final String PROP_NAME_COST_TYPE = "costType";
+
     /**
      * 类型
      */

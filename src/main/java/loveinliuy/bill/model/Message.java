@@ -19,6 +19,7 @@ public class Message {
 
     private String message;
 
+    private String url;
 
     public enum Type {
         /**
@@ -44,7 +45,9 @@ public class Message {
             return "redirect:/message?" +
                     "type=" + type.toString().toLowerCase() +
                     "&" +
-                    "message=" + URLEncoder.encode(message, "utf-8");
+                    "message=" + URLEncoder.encode(message, "utf-8") +
+                    "&" +
+                    "url=" + url;
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }

@@ -13,7 +13,6 @@ import java.io.Serializable;
  * @author zhangshibo  [2018/1/4].
  */
 @Data
-@Builder
 public class CostType implements Serializable {
 
     /**

@@ -3,11 +3,11 @@ package loveinliuy.bill.controller;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import loveinliuy.bill.model.Bill;
-import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.Message;
 import loveinliuy.bill.model.User;
 import loveinliuy.bill.service.BillService;
+import loveinliuy.bill.service.CostTypeService;
 import loveinliuy.bill.util.DateUtil;
 import loveinliuy.bill.util.SessionUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -22,10 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,6 +38,9 @@ public class BillAct {
 
     @Autowired
     private BillService service;
+
+    @Autowired
+    private CostTypeService costTypeService;
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -67,6 +68,25 @@ public class BillAct {
         return "bill/list";
     }
 
+    @RequestMapping(value = "/chart", method = RequestMethod.GET)
+    public String chart(String date, Model model) {
+        DateTime dt;
+        if (StringUtils.isEmpty(date)) {
+            dt = DateTime.now();
+        } else {
+            dt = DateUtil.fromString(date);
+        }
+        DateRange range = DateRange.fullMonth(dt);
+
+        SessionUtil.getCurrentUser().ifPresent(s -> {
+            model.addAttribute("statistics",
+                    service.getUserBillStatisticBetweenDateRangeGroupByCostType(s, range));
+        });
+
+        model.addAttribute("date", dt.toDate());
+        return "bill/chart";
+    }
+
     @ResponseBody
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public Page<Bill> list(String date, @RequestParam(name = "page", defaultValue = "0") Integer page) {
@@ -85,8 +105,7 @@ public class BillAct {
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String save(Model model) {
         User user = SessionUtil.getCurrentUser().orElseThrow(IllegalStateException::new);
-        List<CostType> typesList = new ArrayList<>(service.getCostTypesByBillType(user, Bill.Type.values()));
-        model.addAttribute("costTypes", typesList);
+        model.addAttribute("costTypes", costTypeService.getCostTypesByBillType(user, Bill.Type.values()));
         return "bill/add";
     }
 
@@ -113,6 +132,7 @@ public class BillAct {
 
         log.debug("get bill: {}", bill);
         service.save(bill);
-        return Message.builder().type(Message.Type.SUCCESS).message("保存账单信息成功！").build().toParamString();
+        return Message.builder().type(Message.Type.SUCCESS).message("保存账单信息成功！")
+                .url("/bill").build().toParamString();
     }
 }
