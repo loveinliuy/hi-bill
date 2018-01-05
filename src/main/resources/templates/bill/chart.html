@@ -107,7 +107,9 @@
                     label: {
                         normal: {
                             show: true,
-                            formatter: '{b}: {c}',
+                            formatter: function(params){
+                                return params.name + '\n' + params.value.toFixed(2)
+                            },
                             position: 'right'
                         }
                     },
