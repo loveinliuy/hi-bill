@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
 import java.util.Date;
 import java.util.List;
@@ -36,6 +35,14 @@ public interface BillRepository extends MongoRepository<Bill, String>, BillRepos
      * @return 账单
      */
     Page<Bill> findAllByUserIdAndDateBetween(String userId, Date start, Date end, Pageable pageable);
+
+    /**
+     * 根据账单类型id找到所有账单信息
+     *
+     * @param costTypeId 账单类型id
+     * @return 账单信息
+     */
+    List<Bill> findBillsByCostTypeId(String costTypeId);
 
     /**
      * 根据日期和描述获取账单信息

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/header :: header">
+</head>
+<body>
+<nav th:replace="fragments/nav :: nav"></nav>
+<div class="container">
+    <div style="height: 60px;"></div>
+    <div class="row">
+        <div class="col-xs-12">
+            <a class="btn btn-default" th:href="@{/costType/add}">
+                <span class="glyphicon glyphicon-plus"></span>
+                新增类型
+            </a>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <table class="table table-striped">
+            <caption>当前消费类型</caption>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>类型</th>
+                <th>名称</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="costType,stat : ${costTypes}" th:attr="data-id=${costType.id}">
+                <th scope="row" th:text="${stat.index + 1}">1</th>
+                <td th:text="${costType.type.toString()}">收入</td>
+                <td th:text="${costType.name}">名称</td>
+                <td><span class="glyphicon glyphicon-trash" data-toggle="modal" data-target="#confirm-delete"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">删除确认</h4>
+            </div>
+            <div>
+                <div class="modal-body hidden">
+                </div>
+                <div class="modal-body hidden">
+                    <p>即将删除内容：</p>
+                    <p class="nr"></p>
+                    <p>确认删除么？删除后不可以恢复!</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary confirm">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/footer :: common-js"></div>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    $(function () {
+        $('#confirm-delete').on('show.bs.modal', function (event) {
+            var $target = $(event.relatedTarget);
+            var $this = $(this);
+            var $tr = $target.parent().parent();
+            var id = $tr.attr('data-id');
+            var type = $tr.find('td').eq(0).text();
+            var name = $tr.find('td').eq(1).text();
+
+            var checkUrl = /*[[@{/costType}]]*/ '/costType';
+            checkUrl += '/' + id + '/hasBill';
+            $.ajax({
+                type: 'GET',
+                url: checkUrl,
+                async: false,
+                success: function (result) {
+                    if (result.hasBill) {
+                        var appendItems = [];
+                        appendItems.push('<div class="alert alert-danger">');
+                        appendItems.push('<button type="button" class="close" data-dismiss="alert" aria-label="close">');
+                        appendItems.push('</button>');
+                        appendItems.push('由于消费类型<strong>' + name + '</strong>有对应账单，无法删除。');
+                        appendItems.push('</div>');
+                        var appendHtml = appendItems.join('');
+                        $this.find('.modal-body').eq(0).html(appendHtml).removeClass('hidden').siblings().addClass('hidden');
+                        $this.find('.confirm').addClass('hidden');
+                    } else {
+                        $this.find('.nr').html('类型：' + type + '<br/>' + '名称：' + name);
+                        $this.find('.confirm').removeClass('hidden').unbind().bind('click', function () {
+                            var url = /*[[@{/costType}]]*/ '/costType';
+                            var _csrf = $('input[name="_csrf"]').val();
+                            $.ajax({
+                                type: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': _csrf
+                                },
+                                url: url + '/' + id,
+                                success: function (result) {
+                                    if (result) {
+                                        $tr.remove();
+                                        $('#confirm-delete').modal('hide');
+                                    }
+                                }
+                            });
+                        });
+                        $this.find('.modal-body').eq(1).removeClass('hidden').siblings().addClass('hidden');
+                    }
+                }
+            });
+        });
+    })
+    ;
+
+    /*]]>*/
+</script>
+</body>
+</html>

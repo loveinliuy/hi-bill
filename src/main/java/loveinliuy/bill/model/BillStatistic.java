@@ -12,9 +12,24 @@ import lombok.Data;
 @Builder
 public class BillStatistic {
 
-    private DateRange range;
+    /**
+     * 账单类型
+     */
+    private Bill.Type type;
 
-    private Double income;
+    /**
+     * 消费类型Id
+     */
+    private String costTypeId;
 
-    private Double expense;
+    /**
+     * 消费类型
+     */
+    private String costType;
+
+    /**
+     * 合计
+     */
+    private Double total;
+
 }
