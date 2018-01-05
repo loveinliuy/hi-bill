@@ -26,6 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin().loginPage("/login").permitAll()
                 .and()
                 .logout().permitAll();
+        http.headers().defaultsDisabled().cacheControl();
     }
 
     @Autowired
