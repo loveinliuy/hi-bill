@@ -33,7 +33,6 @@
             <label class="col-sm-2 control-label" for="costTypeSel">类型</label>
             <div class="col-sm-10">
                 <select id="costTypeSel" class="form-control" onchange="setCostType()">
-                    <option type="all" th:selected="${bill == null}" value=""></option>
                     <option th:each="type,stat : ${costTypes}"
                             th:text="${type.name}"
                             th:value="${type.id}"
