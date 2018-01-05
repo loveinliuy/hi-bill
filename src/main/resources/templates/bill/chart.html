@@ -33,34 +33,48 @@
     <form>
         <div class="form-group">
             <label class="control-label">收入</label>
-            <div class="col-sm-10">
-                <label class="checkbox-inline" th:each="s, stat : ${statistics}"
-                       th:if="${s.type.name() == 'Income'}">
-                    <input type="checkbox" th:attr="id=${'type-income-'+stat.index}, data-index=${stat.index}"
-                           checked="checked"
-                           th:value="${#strings.defaultString(s.costType, '未知')}"/>
-                </label>
+            <div class="col-sm-10  col-xs-12">
+                <div class="row">
+                    <div class="col-xs-4" th:each="s, stat : ${statistics}"
+                         th:inline="text"
+                         th:if="${s.type.name() == 'Income'}">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" th:attr="id=${'type-income-'+stat.index}, data-index=${stat.index}"
+                                   checked="checked"
+                                   th:value="${s.costType}"/>
+                            [[${s.costType}]]
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label">支出</label>
-            <div class="col-sm-10">
-                <label class="checkbox-inline" th:each="s, stat : ${statistics}" th:if="${s.type.name() == 'Expense'}">
-                    <input type="checkbox" th:attr="id=${'type-expense-'+stat.index}, data-index=${stat.index}"
-                           checked="checked"
-                           th:value="${#strings.defaultString(s.costType, '未知')}"/>
-                </label>
+            <div class="col-sm-10 col-xs-12">
+                <div class="row">
+                    <div class="col-xs-4" th:each="s, stat : ${statistics}"
+                         th:inline="text"
+                         th:if="${s.type.name() == 'Expense'}">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" th:attr="id=${'type-expense-'+stat.index}, data-index=${stat.index}"
+                                   checked="checked"
+                                   th:value="${s.costType}"/>
+                            [[${s.costType}]]
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
 
-    <div class="col-xs-12" style="height: 500px;" th:style="'height:'+${statistics.size()*100}+'px'" id="chart">
+    <div class="col-xs-12" style="height: 500px;" th:style="'height:'+${120+statistics.size()*30}+'px'" id="chart">
     </div>
 
 </div>
 <div th:replace="fragments/footer :: common-js"></div>
 <script type="text/javascript" th:if="${debug}" src="//cdn.bootcss.com/echarts/3.8.5/echarts.simple.js"></script>
-<script type="text/javascript" th:unless="${debug}" src="//cdn.bootcss.com/echarts/3.8.5/echarts.simple.min.js"></script>
+<script type="text/javascript" th:unless="${debug}"
+        src="//cdn.bootcss.com/echarts/3.8.5/echarts.simple.min.js"></script>
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
     $(function () {
@@ -107,7 +121,9 @@
                     label: {
                         normal: {
                             show: true,
-                            formatter: '{b}: {c}',
+                            formatter: function (params) {
+                                return params.name + '\n' + params.value.toFixed(2)
+                            },
                             position: 'right'
                         }
                     },
@@ -151,8 +167,10 @@
                     changedSeriesData.push({value: -cur.total, label: expenseLabel});
                 }
             }
+            $('#chart').css({'height': 120 + changedAxisData.length * 30 + 'px'});
+            chart.resize();
             chart.setOption({
-                xAxis: {
+                yAxis: {
                     data: changedAxisData
                 },
                 series: [{

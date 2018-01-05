@@ -31,7 +31,7 @@ public class DateRange {
     private DateTime end;
 
     public Date startDate() {
-        return start.toDate();
+        return start.minusMillis(1).toDate();
     }
 
     public Date endDate() {
