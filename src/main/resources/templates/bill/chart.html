@@ -35,7 +35,7 @@
             <label class="control-label">收入</label>
             <div class="col-sm-10  col-xs-12">
                 <div class="row">
-                    <div class="col-xs-3" th:each="s, stat : ${statistics}"
+                    <div class="col-xs-4" th:each="s, stat : ${statistics}"
                          th:inline="text"
                          th:if="${s.type.name() == 'Income'}">
                         <label class="checkbox-inline">
@@ -52,7 +52,7 @@
             <label class="control-label">支出</label>
             <div class="col-sm-10 col-xs-12">
                 <div class="row">
-                    <div class="col-xs-3" th:each="s, stat : ${statistics}"
+                    <div class="col-xs-4" th:each="s, stat : ${statistics}"
                          th:inline="text"
                          th:if="${s.type.name() == 'Expense'}">
                         <label class="checkbox-inline">
