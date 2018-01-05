@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description:
@@ -32,7 +33,16 @@ public interface BillService {
      * @param range 日期区间
      * @return 账单统计结果
      */
-    BillStatistic getUserBillStatisticBetweenDateRange(User user, DateRange range);
+    Map<String, BillStatistic> getUserBillStatisticBetweenDateRange(User user, DateRange range);
+
+    /**
+     * 获取一个用户在一个日期区间内的账单统计，根据消费类型分组
+     *
+     * @param user  用户
+     * @param range 日期区间
+     * @return 账单统计
+     */
+    List<BillStatistic> getUserBillStatisticBetweenDateRangeGroupByCostType(User user, DateRange range);
 
     /**
      * 获取一个用户在一个日期区间内的账单
@@ -54,14 +64,6 @@ public interface BillService {
     boolean isWriteThatDay(Date date, String description);
 
     /**
-     * 获取账单类型对应的消费类型
-     *
-     * @param type type
-     * @return 消费类型列表
-     */
-    List<CostType> getCostTypesByBillType(Bill.Type type);
-
-    /**
      * 保存一个账单
      *
      * @param bill 账单
@@ -76,6 +78,22 @@ public interface BillService {
      * @return 账单详情
      */
     Bill get(String id);
+
+    /**
+     * 查找指定账单类型的账单
+     *
+     * @param costType 账单类型
+     * @return 账单列表
+     */
+    List<Bill> findByCostType(CostType costType);
+
+    /**
+     * 查找指定账单类型的账单
+     *
+     * @param costTypeId 账单类型Id
+     * @return 账单列表
+     */
+    List<Bill> findByCostTypeId(String costTypeId);
 
     /**
      * 删除指定用户指定id的账单信息

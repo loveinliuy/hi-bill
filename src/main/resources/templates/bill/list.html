@@ -16,25 +16,25 @@
                 <h3>支出</h3>
                 <h5 th:inline="text">
                     <span class="glyphicon glyphicon-yen"></span>
-                    [[${#numbers.formatDecimal(billStatistic.expense, 1, 'COMMA', 2, 'POINT')}]]
+                    [[${#numbers.formatDecimal(billStatistic.Expense.total, 1, 'COMMA', 2, 'POINT')}]]
                 </h5>
             </div>
             <div class="pull-left col-xs-5">
                 <h3>收入</h3>
                 <h5 th:inline="text">
                     <span class="glyphicon glyphicon-yen"></span>
-                    [[${#numbers.formatDecimal(billStatistic.income, 1, 'COMMA', 2, 'POINT')}]]
+                    [[${#numbers.formatDecimal(billStatistic.Income.total, 1, 'COMMA', 2, 'POINT')}]]
                 </h5>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <form id="date-choose-form" method="get" th:action="@{/bill}"
-              data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
-              data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
-              data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
-            <div class="form-group col-xs-9" style="padding-right: 0;">
+    <form id="date-choose-form" method="get" th:action="@{/bill}"
+          data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
+          data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
+          data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+        <div class="row">
+            <div class="form-group col-xs-7" style="padding-right: 0;">
                 <label class="sr-only" for="date">日期</label>
                 <div class="input-group date">
                     <div class="input-group-addon">
@@ -46,30 +46,32 @@
                            data-bv-notempty-message="得选看哪个月的"/>
                 </div>
             </div>
-            <div class="form-group col-xs-3">
-                <div class="pull-right">
-                    <button type="submit" class="btn btn-default">提交</button>
-                </div>
+            <div class="form-group col-xs-5">
+                <a class="btn btn-default pull-right" th:href="@{/bill/add}" style="margin-left:10px;">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </a>
+                <button type="submit" class="btn btn-default pull-right">查询</button>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 
     <ul id="bill-data-list" class="list-group">
         <li class="list-group-item"
             th:each="bill, billStat : ${bills}"
+            th:attr="data-id=${bill.id}"
             th:classappend="${bill.type == T(loveinliuy.bill.model.Bill.Type).Expense ? 'list-group-item-warning' : 'list-group-item-success'}">
             <h4 class="list-group-item-heading" th:inline="text">
                 [[${#dates.format(bill.date, 'yyyy-MM-dd')}]]
                 <span style="margin-left: 10px;" data-toggle="modal" data-target="#confirm-delete"
-                      th:attr="data-id=${bill.id}"
                       class="pull-right glyphicon glyphicon-trash"></span>
-                <!--<span class="pull-right glyphicon glyphicon-pencil"></span>-->
+                <span class="pull-right glyphicon glyphicon-pencil" onclick="edit(this)"></span>
             </h4>
             <h5 th:inline="text">
                 [[${bill.type.toString()}]]
                 <span style="margin-left: 2px;" class="glyphicon glyphicon-yen"></span>
                 [[${#numbers.formatDecimal(bill.cost, 1, 'COMMA', 2, 'POINT')}]]
-                <span th:unless="${#strings.isEmpty(bill.costType)}" style="margin-left: 10px;" class="glyphicon glyphicon-tag"></span>
+                <span th:unless="${#strings.isEmpty(bill.costType)}" style="margin-left: 10px;"
+                      class="glyphicon glyphicon-tag"></span>
                 [[${#strings.defaultString(bill.costType, '')}]]
             </h5>
             <p class="list-group-item-text" th:text="${bill.description}">描述</p>
@@ -106,6 +108,12 @@
 <div th:replace="fragments/footer :: common-js"></div>
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
+    function edit(ele) {
+        var id = $(ele).parent().parent().attr('data-id');
+        var url = /*[[@{/bill/edit}]]*/  '/bill/edit';
+        window.location.href = url + '/' + id;
+    }
+
     $(function () {
         $('#date-choose-form').bootstrapValidator();
         $('.date').datepicker({
@@ -148,11 +156,11 @@
                     typeStr = '支出';
                 }
                 var date = new Date(bill.date);
-                items.push('<li class="list-group-item ' + type + '">');
+                items.push('<li class="list-group-item ' + type + '" data-id="' + bill.id + '">');
                 items.push('<h4 class="list-group-item-heading">');
                 items.push(date.getFullYear() + '-' + fillZero(date.getMonth() + 1) + '-' + fillZero(date.getDate()));
-                items.push('<span style="margin-left: 10px;" class="pull-right glyphicon glyphicon-trash" data-toggle="modal" data-target="#confirm-delete" data-id="' + bill.id + '"></span>');
-                // items.push('<span class="pull-right glyphicon glyphicon-pencil"></span>');
+                items.push('<span style="margin-left: 10px;" class="pull-right glyphicon glyphicon-trash" data-toggle="modal" data-target="#confirm-delete"></span>');
+                items.push('<span class="pull-right glyphicon glyphicon-pencil" onclick="edit(this)"></span>');
                 items.push('</h4>');
                 items.push('<h5>');
                 items.push(typeStr);
@@ -203,6 +211,12 @@
                 );
             }
 
+            if($(document).height() <= $(window).height()){
+                $('.last').show();
+                $loading.hide();
+                isLast = true;
+            }
+
             $(window).scroll(function () {
                 var scrollTop = $(this).scrollTop();
                 var scrollHeight = $(document).height();
@@ -225,7 +239,7 @@
             $this.find('.nr').html(date + '<br/>' + cost + '<br/>' + desc);
 
             $this.find('.confirm').unbind().bind('click', function () {
-                var id = $target.attr('data-id');
+                var id = $li.attr('data-id');
                 var url = /*[[@{/bill}]]*/ '/bill';
                 var _csrf = $('input[name="_csrf"]').val();
                 $.ajax({

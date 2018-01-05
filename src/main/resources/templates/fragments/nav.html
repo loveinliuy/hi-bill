@@ -25,13 +25,17 @@
                         账单<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li th:class="${#httpServletRequest.getRequestURI() == '/bill/add'} ? 'active'">
-                            <a th:href="@{/bill/add}">添加</a>
-                        </li>
                         <li th:class="${#httpServletRequest.getRequestURI() == '/bill'} ? 'active'">
                             <a th:href="@{/bill}">查看</a>
                         </li>
+                        <li th:class="${#httpServletRequest.getRequestURI() == '/bill/chart'} ? 'active'">
+                            <a th:href="@{/bill/chart}">统计</a>
+                        </li>
                     </ul>
+                </li>
+                <li role="presentation"
+                    th:class="${#httpServletRequest.getRequestURI().startsWith('/costType')} ? 'active'">
+                    <a th:href="@{/costType}">消费类型</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

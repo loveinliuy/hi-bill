@@ -6,7 +6,7 @@ import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.User;
 import loveinliuy.bill.repository.BillRepository;
-import loveinliuy.bill.repository.CostTypeRepository;
+import loveinliuy.bill.repository.BillRepositoryCustom;
 import loveinliuy.bill.util.IdentityUtil;
 import loveinliuy.bill.util.SessionUtil;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,10 +37,6 @@ public class BillServiceImpl implements BillService {
     @Autowired
     private BillRepository repository;
 
-    @Autowired
-    private CostTypeRepository costTypeRepository;
-
-
     @Override
     public List<Bill> getUserRecentBills(User user) {
         return repository.findTop5ByUserId(user.getId(), new Sort(Sort.Direction.DESC, Bill.PROP_NAME_ADD_DATE));
@@ -47,29 +44,27 @@ public class BillServiceImpl implements BillService {
 
 
     @Override
-    public BillStatistic getUserBillStatisticBetweenDateRange(User user, DateRange range) {
+    public Map<String, BillStatistic> getUserBillStatisticBetweenDateRange(User user, DateRange range) {
         AggregationResults<Map> agg = repository.userTotalBillBetweenDate(user.getId(), range.startDate(), range.endDate());
-        List<Map> res = agg.getMappedResults();
-        BillStatistic statistic = BillStatistic.builder()
-                .range(range)
-                .income(NumberUtils.DOUBLE_ZERO)
-                .expense(NumberUtils.DOUBLE_ZERO)
-                .build();
-        if (res == null || res.isEmpty()) {
-            return statistic;
+        Map<String, BillStatistic> result = new HashMap<>(2);
+        for (Map map : agg.getMappedResults()) {
+            String type = (String) map.get(Fields.UNDERSCORE_ID);
+            Double total = (Double) map.get(BillRepositoryCustom.SUM_GROUP_ALIAS);
+            result.put(type, BillStatistic.builder().type(Bill.Type.valueOf(type)).total(total).build());
         }
-        for (Map m : res) {
-            Object key = m.get(Fields.UNDERSCORE_ID);
-            Double money = Double.parseDouble(String.valueOf(m.get(BillRepository.SUM_GROUP_ALIAS)));
-            if (Bill.Type.Income.name().equals(key)) {
-                statistic.setIncome(money);
-            } else if (Bill.Type.Expense.name().equals(key)) {
-                statistic.setExpense(money);
-            } else {
-                throw new IllegalStateException("error key: " + key);
-            }
+        if (!result.containsKey(Bill.Type.Income.name())) {
+            result.put(Bill.Type.Income.name(), BillStatistic.builder().type(Bill.Type.Income).total(NumberUtils.DOUBLE_ZERO).build());
         }
-        return statistic;
+        if (!result.containsKey(Bill.Type.Expense.name())) {
+            result.put(Bill.Type.Expense.name(), BillStatistic.builder().type(Bill.Type.Expense).total(NumberUtils.DOUBLE_ZERO).build());
+        }
+        return result;
+    }
+
+    @Override
+    public List<BillStatistic> getUserBillStatisticBetweenDateRangeGroupByCostType(User user, DateRange range) {
+        AggregationResults<BillStatistic> agg = repository.userBillBetweenDateRangeGroupByCostType(user.getId(), range.startDate(), range.endDate());
+        return agg.getMappedResults();
     }
 
     @Override
@@ -85,10 +80,6 @@ public class BillServiceImpl implements BillService {
         return Objects.nonNull(bill);
     }
 
-    @Override
-    public List<CostType> getCostTypesByBillType(Bill.Type type) {
-        return costTypeRepository.findCostTypesByTypeOrderByPriorityAsc(type);
-    }
 
     @Override
     public Bill save(Bill bill) {
@@ -97,6 +88,16 @@ public class BillServiceImpl implements BillService {
         bill.setAddDate(new Date());
         repository.save(bill);
         return bill;
+    }
+
+    @Override
+    public List<Bill> findByCostType(CostType costType) {
+        return findByCostTypeId(costType.getId());
+    }
+
+    @Override
+    public List<Bill> findByCostTypeId(String costTypeId) {
+        return repository.findBillsByCostTypeId(costTypeId);
     }
 
     @Override
