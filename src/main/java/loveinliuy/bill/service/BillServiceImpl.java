@@ -2,6 +2,7 @@ package loveinliuy.bill.service;
 
 import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.BillStatistic;
+import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.User;
 import loveinliuy.bill.repository.BillRepository;
@@ -87,6 +88,16 @@ public class BillServiceImpl implements BillService {
         bill.setAddDate(new Date());
         repository.save(bill);
         return bill;
+    }
+
+    @Override
+    public List<Bill> findByCostType(CostType costType) {
+        return findByCostTypeId(costType.getId());
+    }
+
+    @Override
+    public List<Bill> findByCostTypeId(String costTypeId) {
+        return repository.findBillsByCostTypeId(costTypeId);
     }
 
     @Override

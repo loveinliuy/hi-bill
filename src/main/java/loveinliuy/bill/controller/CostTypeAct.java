@@ -5,17 +5,20 @@ import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.Message;
 import loveinliuy.bill.model.User;
+import loveinliuy.bill.service.BillService;
 import loveinliuy.bill.service.CostTypeService;
 import loveinliuy.bill.util.SessionUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +32,9 @@ public class CostTypeAct {
 
     @Autowired
     private CostTypeService service;
+
+    @Autowired
+    private BillService billService;
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String add() {
@@ -44,6 +50,19 @@ public class CostTypeAct {
         service.save(costType);
         return Message.builder().type(Message.Type.SUCCESS).message("保存消费类型信息成功！")
                 .url("/costType").build().toParamString();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public Map<String, Boolean> delete(@PathVariable String id){
+        return Collections.singletonMap("success", service.delete(id));
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/{id}/hasBill", method = RequestMethod.GET)
+    public Map<String, Boolean> hasBill(@PathVariable String id) {
+        List<Bill> list = billService.findByCostTypeId(id);
+        return Collections.singletonMap("hasBill", list != null && !list.isEmpty());
     }
 
     @ResponseBody

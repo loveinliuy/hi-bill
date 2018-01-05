@@ -34,8 +34,8 @@
                 <th>金额</th>
             </tr>
             </thead>
-            <tbody th:each="bill,billStat : ${recentBills}">
-            <tr>
+            <tbody >
+            <tr th:each="bill,billStat : ${recentBills}">
                 <th scope="row" th:text="${billStat.index + 1}">1</th>
                 <td th:text="${#dates.format(bill.date, 'yyyy-MM-dd')}">2015-01-01</td>
                 <td th:text="${bill.description}">账单内容1</td>

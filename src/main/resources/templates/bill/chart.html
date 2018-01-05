@@ -59,6 +59,8 @@
 
 </div>
 <div th:replace="fragments/footer :: common-js"></div>
+<script type="text/javascript" th:if="${debug}" src="//cdn.bootcss.com/echarts/3.8.5/echarts.simple.js"></script>
+<script type="text/javascript" th:unless="${debug}" src="//cdn.bootcss.com/echarts/3.8.5/echarts.simple.min.js"></script>
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
     $(function () {

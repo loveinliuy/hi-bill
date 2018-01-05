@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * description:
@@ -38,5 +39,16 @@ public class CostTypeServiceImpl implements CostTypeService {
     @Override
     public List<CostType> getCostTypesByBillType(User user, Bill.Type... types) {
         return repository.findCostTypesByUserIdAndTypeInOrderByPriorityAsc(user.getId(), types);
+    }
+
+    @Override
+    public boolean delete(String id) {
+        Optional<User> user = SessionUtil.getCurrentUser();
+        if (user.isPresent()) {
+            repository.delete(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -2,6 +2,7 @@ package loveinliuy.bill.service;
 
 import loveinliuy.bill.model.Bill;
 import loveinliuy.bill.model.BillStatistic;
+import loveinliuy.bill.model.CostType;
 import loveinliuy.bill.model.DateRange;
 import loveinliuy.bill.model.User;
 import org.springframework.data.domain.Page;
@@ -77,6 +78,22 @@ public interface BillService {
      * @return 账单详情
      */
     Bill get(String id);
+
+    /**
+     * 查找指定账单类型的账单
+     *
+     * @param costType 账单类型
+     * @return 账单列表
+     */
+    List<Bill> findByCostType(CostType costType);
+
+    /**
+     * 查找指定账单类型的账单
+     *
+     * @param costTypeId 账单类型Id
+     * @return 账单列表
+     */
+    List<Bill> findByCostTypeId(String costTypeId);
 
     /**
      * 删除指定用户指定id的账单信息

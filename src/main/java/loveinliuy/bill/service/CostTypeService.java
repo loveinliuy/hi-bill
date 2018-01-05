@@ -45,5 +45,13 @@ public interface CostTypeService {
      */
     List<CostType> getCostTypesByBillType(User user, Bill.Type... types);
 
+    /**
+     * 删除
+     *
+     * @param id id
+     * @return 是否删除成功
+     */
+    boolean delete(String id);
+
 
 }
