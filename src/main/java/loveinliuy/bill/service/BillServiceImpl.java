@@ -9,6 +9,7 @@ import loveinliuy.bill.repository.BillRepository;
 import loveinliuy.bill.repository.BillRepositoryCustom;
 import loveinliuy.bill.util.IdentityUtil;
 import loveinliuy.bill.util.SessionUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -75,15 +76,17 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public boolean isWriteThatDay(Date date, String description) {
+    public boolean isWriteThatDay(Date date, String description, String id) {
         Bill bill = repository.findByDateAndDescription(date, description);
-        return Objects.nonNull(bill);
+        return bill != null && !bill.getId().equals(id);
     }
 
 
     @Override
     public Bill save(Bill bill) {
-        bill.setId(IdentityUtil.uuid());
+        if(StringUtils.isEmpty(bill.getId())) {
+            bill.setId(IdentityUtil.uuid());
+        }
         bill.setUserId(SessionUtil.getCurrentUser().orElseThrow(IllegalStateException::new).getId());
         bill.setAddDate(new Date());
         repository.save(bill);

@@ -7,10 +7,13 @@
 <div class="container">
     <div style="height: 60px;"></div>
     <h1>新增记录</h1>
-    <form id="new-bill-form" class="form-horizontal" th:action="@{/bill/add}" method="post"
+    <form id="new-bill-form" class="form-horizontal"
+          th:action="@{/bill/add}"
+          method="post"
           data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
           data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
           data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+        <input type="hidden" name="id" th:value="${bill != null ? bill.id : ''}"/>
         <div class="form-group">
             <label class="col-sm-2 control-label">收支</label>
             <div class="col-sm-10">
@@ -116,7 +119,8 @@
                             data: function (validator, $field, value) {
                                 return {
                                     date: validator.getFieldElements('date').val(),
-                                    description: value
+                                    description: value,
+                                    id: /*[[${bill != null ? bill.id : ''}]]*/ '123'
                                 };
                             },
                             type: "GET",

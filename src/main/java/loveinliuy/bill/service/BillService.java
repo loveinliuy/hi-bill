@@ -59,9 +59,10 @@ public interface BillService {
      *
      * @param date        指定日期
      * @param description 指定描述
+     * @param id          指定id
      * @return 重复返回true，反之返回false
      */
-    boolean isWriteThatDay(Date date, String description);
+    boolean isWriteThatDay(Date date, String description, String id);
 
     /**
      * 保存一个账单

@@ -126,9 +126,9 @@ public class BillAct {
 
     @ResponseBody
     @RequestMapping(value = "/description/validate")
-    public Map<String, Boolean> descriptionValid(String date, String description) {
+    public Map<String, Boolean> descriptionValid(String date, String description, String id) {
         Date dt = DateUtil.fromString(date).toDate();
-        Boolean writeToday = service.isWriteThatDay(dt, description);
+        Boolean writeToday = service.isWriteThatDay(dt, description, id);
         return Collections.singletonMap("valid", !writeToday);
     }
 
