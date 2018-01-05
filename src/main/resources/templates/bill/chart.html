@@ -59,7 +59,7 @@
         </div>
     </form>
 
-    <div class="col-xs-12" style="height: 500px;" th:style="'height:'+${statistics.size()*70}+'px'" id="chart">
+    <div class="col-xs-12" style="height: 500px;" th:style="'height:'+${120+statistics.size()*30}+'px'" id="chart">
     </div>
 
 </div>
@@ -158,8 +158,10 @@
                     changedSeriesData.push({value: -cur.total, label: expenseLabel});
                 }
             }
+            $('#chart').css({'height':120+changedAxisData.length*30+'px'});
+            chart.resize();
             chart.setOption({
-                xAxis: {
+                yAxis: {
                     data: changedAxisData
                 },
                 series: [{
