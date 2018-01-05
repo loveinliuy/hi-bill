@@ -15,12 +15,13 @@
             <label class="col-sm-2 control-label">收支</label>
             <div class="col-sm-10">
                 <label class="radio-inline">
-                    <!--/*@thymesVar id="Type" type="loveinliuy.bill.model.Bill.Type"*/-->
                     <input type="radio" name="type" id="type-out"
-                           th:value="${T(loveinliuy.bill.model.Bill.Type).Expense.name()}" checked="checked"/>支出
+                           th:value="${T(loveinliuy.bill.model.Bill.Type).Expense.name()}"
+                           th:checked="${bill == null or (bill != null and bill.type.name() == 'Expense')}"/>支出
                 </label>
                 <label class="radio-inline">
                     <input type="radio" name="type" id="type-in"
+                           th:checked="${bill != null and bill.type.name() == 'Income'}"
                            th:value="${T(loveinliuy.bill.model.Bill.Type).Income.name()}"/>收入
                 </label>
             </div>
@@ -29,12 +30,13 @@
             <label class="col-sm-2 control-label" for="costTypeSel">类型</label>
             <div class="col-sm-10">
                 <select id="costTypeSel" class="form-control" onchange="setCostType()">
-                    <option type="all" selected="selected" value=""></option>
+                    <option type="all" th:selected="${bill == null}" value=""></option>
                     <option th:each="type,stat : ${costTypes}"
                             th:text="${type.name}"
                             th:value="${type.id}"
                             th:attr="type=${type.type.name()}"
-                            th:class="${type.type.equals(T(loveinliuy.bill.model.Bill.Type).Income) ? 'hidden' : 'show'}">
+                            th:selected="${bill != null and bill.costTypeId == type.id}"
+                            th:class="${type.type.name() == (bill != null ? bill.type.name() : 'Expense') ? 'show' : 'hidden'}">
                         类型1
                     </option>
                 </select>
@@ -50,7 +52,7 @@
                         <span class="glyphicon glyphicon-calendar"></span>
                     </div>
                     <input type="text" class="form-control" id="date" name="date" value="2015-01-01" placeholder="啥时候"
-                           th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                           th:value="${#dates.format((bill == null ? #dates.createNow() : bill.date), 'yyyy-MM-dd')}"
                            data-bv-notempty="true"
                            data-bv-notempty-message="还没选啥时候花的呢"/>
                 </div>
@@ -60,6 +62,7 @@
             <label class="col-sm-2 control-label" for="description">描述</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" name="description" id="description" placeholder="哪儿花的"
+                       th:value="${bill == null ? '' : bill.description}"
                        data-bv-notempty="true"
                        data-bv-notempty-message="这钱到底花哪儿了啊"/>
             </div>
@@ -68,6 +71,7 @@
             <label class="col-sm-2 control-label" for="cost">金额</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" name="cost" id="cost" placeholder="花多钱"
+                       th:value="${bill == null ? '' : #numbers.formatDecimal(bill.cost, 1, 'COMMA', 2, 'POINT')}"
                        data-bv-notempty="true"
                        data-bv-notempty-message="花了多钱啊"
                        data-bv-regexp="true"

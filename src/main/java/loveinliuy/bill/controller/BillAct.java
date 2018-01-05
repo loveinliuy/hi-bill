@@ -109,6 +109,14 @@ public class BillAct {
         return "bill/add";
     }
 
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+    public String edit(@PathVariable String id, Model model) {
+        User user = SessionUtil.getCurrentUser().orElseThrow(IllegalStateException::new);
+        model.addAttribute("costTypes", costTypeService.getCostTypesByBillType(user, Bill.Type.values()));
+        model.addAttribute("bill", service.get(id));
+        return "bill/add";
+    }
+
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public Map<String, Boolean> delete(@PathVariable String id) {
