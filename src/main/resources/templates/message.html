@@ -27,7 +27,7 @@
     </div>
     <p>
         <a id="back-index" class="btn btn-primary pull-right" href="#"
-           th:href="${#strings.defaultString(param.url[0], #httpServletRequest.getContextPath()+'/')}"
+           th:href="${#httpServletRequest.getContextPath() + #strings.defaultString(param.url[0], '/')}"
            th:inline="text" role="button">
             [[${#strings.isEmpty(param.url[0])?'回到首页':'返回'}]]
             <span class="badge">2</span>
